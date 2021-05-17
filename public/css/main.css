@@ -1,6 +1,7 @@
 :root{
     --sidebar-width:250px;
     --sidebar-color:blue;
+    --main-content-color: #ecf0f1;
 }
 
 .sidebar-container{
@@ -10,4 +11,14 @@
     bottom:0px;
     width: var(--sidebar-width);
     background: var(--sidebar-color);
+}
+
+.main-content-container{
+    position:absolute;
+    top:0;
+    left: var(--sidebar-width);
+    right:0px;
+    bottom:0px;
+    background: var(--main-content-color);
+    margin:20px;
 }
