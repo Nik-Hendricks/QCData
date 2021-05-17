@@ -1,0 +1,23 @@
+{
+  "name": "qcdata",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nik-Hendricks/QCData.git"
+  },
+  "author": "Nicholas Cooley",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nik-Hendricks/QCData/issues"
+  },
+  "homepage": "https://github.com/Nik-Hendricks/QCData#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
