@@ -1,6 +1,9 @@
 const app = require('express')();
 const http = require('http').Server(app);
 const fs = require('fs');
+const nedb = require('nedb');
+
+var datastore = new nedb();
 
 http.listen(80, () => {
   console.log("listening on 80")
@@ -8,7 +11,27 @@ http.listen(80, () => {
 
 //app.listen(81)
 
-app.get("/js/:file",function(req, res){
+app.get("/view/:file",(req, res) => {
+    var file = req.param('file');
+    console.log(file)
+    res.header({
+      'Content-Type': 'text/html',
+      'Content-Size': getFilesizeInBytes(__dirname + '/public/views/' + file)
+    });
+    res.sendFile(__dirname + '/public/views/'+file)
+})
+
+app.get("/component/:file",(req, res) => {
+    var file = req.param('file');
+    console.log(file)
+    res.header({
+      'Content-Type': 'text/html',
+      'Content-Size': getFilesizeInBytes(__dirname + '/public/components/' + file)
+    });
+    res.sendFile(__dirname + '/public/components/'+file)
+})
+
+app.get("/js/:file",(req, res) => {
     var file = req.param('file');
     res.header({
       'Content-Type': 'text/javascript',
@@ -17,7 +40,7 @@ app.get("/js/:file",function(req, res){
     res.sendFile(__dirname + '/public/js/' + file)
 })
 
-app.get("/css/:file",function(req, res){
+app.get("/css/:file",(req, res) => {
     var file = req.param('file');
     res.header({
       'Content-Type': 'text/css',
@@ -27,7 +50,7 @@ app.get("/css/:file",function(req, res){
 })
 
 
-app.get("/img/:file",function(req, res){
+app.get("/img/:file",(req, res) => {
     var file = req.param('file')
     res.header({
       'Content-Type': 'image/png',
