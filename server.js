@@ -1,16 +1,14 @@
 const app = require('express')();
 const http = require('http').Server(app);
 const fs = require('fs');
-const nedb = require('nedb');
-
-var datastore = new nedb();
+var Nedb = require('nedb');
 
 //configure db
 jobs_db    =    new Nedb({ filename: 'db/jobs_db.db', autoload: true, timestampData: true });
 product_db =    new Nedb({filename: 'db/products_db.db', autoload:true, timestampData: true});
 machine_db =    new Nedb({ filename: 'db/machines_db.db', autoload: true , timestampData: true});
-sheet_db   =    new Nedb({filename: 'db/sheet_db.db'})  
-robot_db
+sheet_db   =    new Nedb({filename: 'db/sheet_db.db', autoload: true, timestampData: true});   
+robot_db   =    new Nedb({filename: 'db/robots_db.db', autoload:true, timestampData: true})
 
 
 
