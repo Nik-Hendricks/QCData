@@ -5,6 +5,15 @@ const nedb = require('nedb');
 
 var datastore = new nedb();
 
+//configure db
+jobs_db    =    new Nedb({ filename: 'db/jobs_db.db', autoload: true, timestampData: true });
+product_db =    new Nedb({filename: 'db/products_db.db', autoload:true, timestampData: true});
+machine_db =    new Nedb({ filename: 'db/machines_db.db', autoload: true , timestampData: true});
+sheet_db   =    new Nedb({filename: 'db/sheet_db.db'})  
+robot_db
+
+
+
 http.listen(80, () => {
   console.log("listening on 80")
 })
