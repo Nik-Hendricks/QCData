@@ -30,7 +30,7 @@ function populateSidebar(){
     for (var key of Object.keys(sidebarItems)) {
         item = sidebarItems[key];
         console.log(sidebarItems[key].title)
-        $("#sidebar-container").append(`<div id="${item.id}" onclick="${item.onclick}" class="sidebar-item"><i class="${item.icon}"></i><p>${item.title}</p></div>`)
+        $("#sidebar-items-container").append(`<div id="${item.id}" onclick="${item.onclick}" class="sidebar-item"><i class="${item.icon}"></i><p>${item.title}</p></div>`)
     
     }
 }

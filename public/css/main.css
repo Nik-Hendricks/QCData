@@ -60,6 +60,14 @@ body{
     cursor:pointer;
 }
 
+.sidebar-items-container{
+    position: relative;
+    right:0px;
+    left:0px;
+    top:100px;
+    bottom:0px;
+}
+
 .sidebar-item p{
     color:var(--grey-2);
     text-align: center;
@@ -81,6 +89,17 @@ body{
 .sidebar-item p:hover{
     color:white;
     transition: color ease-in-out .3;
+}
+
+.sidebar-logo-container{
+    position: absolute  ;
+    top:10px;
+    left:10px;
+    right:10px;
+    height:80px;
+    background-image: url("/img/QCM-Logo-black.png");
+    background-size: contain;
+    filter: invert(16%) sepia(2%) saturate(4257%) hue-rotate(182deg) brightness(92%) contrast(79%);
 }
 
 .main-content-container{
@@ -116,6 +135,9 @@ body{
     text-align: center;
     vertical-align: middle;
     border-radius: 10px;
+    float:left;
+    margin-left:20px;
+    margin-top:20px;
 }
 
 .form-page-item-div i{
