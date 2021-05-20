@@ -5,17 +5,17 @@ var sidebarItems = {
         id: 'home-item',
         onclick: "homeView()"
     },
-    yourSongs:{
-        title: "Data",
-        icon: 'fas fa-music',
+    forms:{
+        title: "Forms",
+        icon: 'fas fa-file-alt',
         id:"your-songs-item",
-        onclick:"songsView()"
+        onclick:"formsView()"
     },
-    playlists:{
-        title: "Settings",
-        icon: 'fas fa-compact-disc',
+    data:{
+        title: "Data",
+        icon: 'fas fa-database',
         id:"playlist-item",
-        onclick: "playlistsView()",
+        onclick: "dataView()",
     },
 }
 
@@ -35,3 +35,27 @@ function populateSidebar(){
     }
 }
 
+function homeView(){
+    $.get( "/view/home.html", function( data ) {
+        clearMainContentContainer()
+        $("#main-content-container").append(data);
+    });
+}
+
+function formsView(){
+    $.get( "/view/forms.html", function( data ) {
+        clearMainContentContainer()
+        $("#main-content-container").append(data);
+    });
+}
+
+function dataView(){
+    $.get( "/view/home.html", function( data ) {
+        clearMainContentContainer()
+        $("#main-content-container").append(data);
+    });
+}
+
+function clearMainContentContainer(){
+    $('#main-content-container').empty();
+}

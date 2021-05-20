@@ -30,7 +30,7 @@ body{
 
 :root{
     --sidebar-width:250px;
-    --sidebar-color:#3498db;
+    --sidebar-color:var(--blue-1);
     --main-content-color: #ecf0f1;
     --sidebar-item-height:70px;
     --grey-1:#26282b;
@@ -61,7 +61,7 @@ body{
 }
 
 .sidebar-item p{
-    color:var(--blue-2);
+    color:var(--grey-2);
     text-align: center;
     padding:0;
     margin:0;
@@ -73,7 +73,7 @@ body{
     position: relative;
     float:left;
     left:20;
-    color:var(--blue-2);
+    color:var(--grey-2);
     font-size:20;
     line-height: var(--sidebar-item-height);
 }
@@ -84,11 +84,47 @@ body{
 }
 
 .main-content-container{
-    position:absolute;
+    position: absolute;
     top:0;
-    left: var(--sidebar-width);
-    right:0px;
-    bottom:0px;
-    background: var(--main-content-color);
-    margin:20px;
+    bottom:0;
+    right:0;
+    left:var(--sidebar-width);
+    background:var(--grey-2);
+    padding-right:40px;
+    padding-left:40px;
+}
+
+.main-content-container p{
+    color:white;
+    text-align: left;
+    max-width:900px;
+}
+
+.main-content-container ul{
+    color:var(--blue-1);
+}
+
+.form-page-item-div{
+    position: relative;
+    top:20px;
+    left:20px;
+    height:200px;
+    width:200px;
+    background:var(--grey-3);
+    padding:0;
+    margin:0;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 10px;
+}
+
+.form-page-item-div i{
+    font-size:80px;
+    line-height: 130px;
+    color:var(--blue-2);
+}
+
+.form-page-item-div p{
+    color:var(--blue-2);
+    text-align: center;
 }
