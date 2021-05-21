@@ -119,6 +119,10 @@ body{
     max-width:900px;
 }
 
+.main-content-container h1{
+    color: var(--blue-1);
+}
+
 .main-content-container ul{
     color:var(--blue-1);
 }
