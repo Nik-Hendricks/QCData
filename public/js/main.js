@@ -49,6 +49,15 @@ function formsView(){
     });
 }
 
+function dataFormView(form){
+    $.get( "/view/dataFormView.html", function( data ) {
+        clearMainContentContainer()
+        $("#main-content-container").append(data);
+    }).then(() => {
+        document.getElementById("data-form-control").setAttribute("form", form)
+    });
+}
+
 function dataView(){
     $.get( "/view/home.html", function( data ) {
         clearMainContentContainer()

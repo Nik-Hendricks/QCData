@@ -38,6 +38,16 @@ app.get("/component/:file",(req, res) => {
     res.sendFile(__dirname + '/public/components/'+file)
 })
 
+app.get("/form/:file",(req, res) => {
+  var file = req.param('file');
+  console.log(file)
+  res.header({
+    'Content-Type': 'text/html',
+    'Content-Size': getFilesizeInBytes(__dirname + '/public/forms/' + file)
+  });
+  res.sendFile(__dirname + '/public/forms/'+file)
+})
+
 app.get("/js/:file",(req, res) => {
     var file = req.param('file');
     res.header({

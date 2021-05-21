@@ -35,6 +35,30 @@ class songTable extends HTMLElement {
     }
 }
 
+class DataFormControl extends HTMLElement{
+    constructor(){
+        super();
+
+
+        getHTML('dataFormControl.html').then(html=>{
+            this.innerHTML = html
+        }).then(() => {
+            this.dataForm = this.getAttribute('form')
+            console.log(this.dataForm)
+            getForm(this.dataForm).then(form => {
+                $("#data-form-control-body").append(form)
+            })
+        })
+    }
+}
+
+function getForm(form){
+    return new Promise(resolve => {
+        $.get(`/form/${form}`, (data) => {
+            resolve(data)
+        })
+    })
+}
 
 function getHTML(file){
     return new Promise(resolve =>{
@@ -45,6 +69,4 @@ function getHTML(file){
 }
 
 
-
-window.customElements.define('mini-player', miniPlayer);
-window.customElements.define('song-table', songTable);
+window.customElements.define("data-form-control", DataFormControl);
