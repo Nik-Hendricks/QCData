@@ -1,27 +1,20 @@
 const app = require('express')();
 const http = require('http').Server(app);
 const fs = require('fs');
-var Nedb = require('nedb');
-
-var connect = require('camo').connect;
- 
-var database;
-var uri = 'nedb:///'+ __dirname +'/db';
-connect(uri).then(function(db) {
-    database = db;
-});
-
-////configure db
-//jobs_db    =    new Nedb({ filename: 'db/jobs_db.db', autoload: true, timestampData: true });
-//product_db =    new Nedb({filename: 'db/products_db.db', autoload:true, timestampData: true});
-//machine_db =    new Nedb({ filename: 'db/machines_db.db', autoload: true , timestampData: true});
-//sheet_db   =    new Nedb({filename: 'db/sheet_db.db', autoload: true, timestampData: true});   
-//robot_db   =    new Nedb({filename: 'db/robots_db.db', autoload:true, timestampData: true})
-
+const database = require('./db/database');
+const robotModel = require('./db/models/robot.js');
 
 
 http.listen(80, () => {
   console.log("listening on 80")
+  let robot1 = new robotModel({
+    robotName: "robot1",
+    robotId: "1"
+  })
+
+  robot1.save().then(doc => {
+    console.log(doc)
+  })
 })
 
 //app.listen(81)
