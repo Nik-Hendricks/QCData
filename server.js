@@ -3,6 +3,14 @@ const http = require('http').Server(app);
 const fs = require('fs');
 const database = require('./db/database');
 const robotModel = require('./db/models/robot.js');
+const clientModel = require('./db/models/client.js');
+
+const modelMap = {
+  "robotModel": robotModel,
+  "clientModel": clientModel
+}
+
+console.log(robotModel.schema.paths)
 
 
 http.listen(80, () => {
@@ -16,8 +24,17 @@ http.listen(80, () => {
     console.log(doc)
   })
 })
+ 
 
 //app.listen(81)
+
+app.get("/modelFeilds/:model", (req, res) => {
+  var model = req.param('model');
+  console.log(model)
+  console.log(modelMap[model])
+
+res.json(modelMap[model].schema.paths)
+})
 
 app.get("/view/:file",(req, res) => {
     var file = req.param('file');
@@ -80,6 +97,8 @@ app.get("/img/:file",(req, res) => {
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html')
 })
+
+
 
 
 

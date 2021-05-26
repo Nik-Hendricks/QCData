@@ -49,6 +49,15 @@ function formsView(){
     });
 }
 
+function dataTableView(model){
+    $.get("/view/dataFormView.html", (data) => {
+        clearMainContentContainer();
+        $("#main-content-container").append(data);
+    }).then(() => {
+        document.getElementById("data-table").setAttribute("model", model)
+    })
+}
+
 function dataFormView(form){
     $.get( "/view/dataFormView.html", function( data ) {
         clearMainContentContainer()
@@ -67,4 +76,9 @@ function dataView(){
 
 function clearMainContentContainer(){
     $('#main-content-container').empty();
+}
+
+function submitModelData(ev){
+    console.log(ev)
+    
 }
