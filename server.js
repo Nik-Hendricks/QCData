@@ -4,10 +4,18 @@ const fs = require('fs');
 const database = require('./db/database');
 const robotModel = require('./db/models/robot.js');
 const clientModel = require('./db/models/client.js');
+const jobModel = require('./db/models/job.js');
+const machineModel = require('./db/models/machine.js');
+const setupModel = require('./db/models/setup.js');
+const moldModel = require('./db/models/mold.js');
 
 const modelMap = {
   "robotModel": robotModel,
-  "clientModel": clientModel
+  "clientModel": clientModel,
+  "jobModel": jobModel,
+  "stupModel": setupModel,
+  "machineModel" : machineModel,
+  "moldModel": moldModel
 }
 
 console.log(robotModel.schema.paths)

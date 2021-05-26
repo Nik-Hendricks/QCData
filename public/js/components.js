@@ -19,6 +19,14 @@ class DataFormControl extends HTMLElement{
 class DataTable extends HTMLElement{
     constructor(){
         super();
+
+        const dataTypeInputs = {
+            Number: "<input type='text' placeholder='Number'/>",
+            String: "<input type='text' placeholder='String'/>",
+            Boolean:"<input type='checkbox'/>",
+            Date: `<input type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`
+        }
+
         getHTML('dataTable.html').then(html => {
             this.innerHTML = html
         }).then(() => {
@@ -32,9 +40,13 @@ class DataTable extends HTMLElement{
 
                 for(var key in data){
                     console.log(data[key]);
+
+                    var dataType = data[key].instance;
+                    var feildName = data[key].path;
+
                     $("#data-table-table").append(`
                         <tr>
-                            <td> <p>${data[key].path}</p></td><td><input type="text" placeholder="${data[key].instance}"/></td>
+                            <td> <p>${data[key].path}</p></td><td>${dataTypeInputs[dataType]}</td>
                         </tr>
                     `)
                 }
