@@ -1,6 +1,8 @@
-const app = require('express')();
+const express = require('express');
+const app = express();
 const http = require('http').Server(app);
 const fs = require('fs');
+const ObjectID = require('mongodb').ObjectID;
 const database = require('./db/database');
 const robotModel = require('./db/models/robot.js');
 const clientModel = require('./db/models/client.js');
@@ -8,33 +10,67 @@ const jobModel = require('./db/models/job.js');
 const machineModel = require('./db/models/machine.js');
 const setupModel = require('./db/models/setup.js');
 const moldModel = require('./db/models/mold.js');
+const productModel = require('./db/models/product.js')
 
 const modelMap = {
   "robotModel": robotModel,
   "clientModel": clientModel,
   "jobModel": jobModel,
-  "stupModel": setupModel,
+  "setupModel": setupModel,
   "machineModel" : machineModel,
-  "moldModel": moldModel
+  "moldModel": moldModel,
+  "productModel": productModel
 }
-
-console.log(robotModel.schema.paths)
+app.use(
+  express.urlencoded({
+    extended: true
+  })
+)
+app.use(express.json());
 
 
 http.listen(80, () => {
   console.log("listening on 80")
-  let robot1 = new robotModel({
-    robotName: "robot1",
-    robotId: "1"
-  })
 
-  robot1.save().then(doc => {
-    console.log(doc)
-  })
 })
  
 
 //app.listen(81)
+app.post("/db/:model/insert", (req, res) => {
+  var model = req.param('model');
+
+  console.log(req.body.data)
+
+  var model = new modelMap[model](req.body.data)
+console.log(model)
+
+
+  model.save();
+
+  res.json({"data": "success"})
+
+})
+
+app.get("/db/document/:model", (req, res) => {
+  var model = req.param('model');
+  console.log(model);
+
+  var queryModel = modelMap[model];
+  var sendDoc = []
+
+  if(queryModel){
+    queryModel.find((err, docs) => {
+      for(var key in docs){
+        console.log(docs[key])
+        sendDoc.push(docs[key])
+      }
+
+      res.json({"data": sendDoc})
+    })
+  }
+
+
+})
 
 app.get("/modelFeilds/:model", (req, res) => {
   var model = req.param('model');

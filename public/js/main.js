@@ -19,11 +19,97 @@ var sidebarItems = {
     },
 }
 
+var dataInputItems = {
+        robots:{
+        title: "New Robot",
+        icon: 'fas fa-robot',
+        id:"data-view-item",
+        onclick: "dataInputTableView('robotModel')",
+    },
+
+    products:{
+        title: "New Product",
+        icon: 'fas fa-plus-square',
+        id:"data-view-item",
+        onclick: "dataInputTableView('productModel')",
+    },
+
+    clients:{
+        title: "New Client",
+        icon: 'fas fa-handshake',
+        id:"data-view-item",
+        onclick: "dataInputTableView('clientModel')",
+    },
+    setups:{
+        title: "New Setup",
+        icon: 'fas fa-wrench',
+        id:"data-view-item",
+        onclick: "dataInputTableView('setupModel')",
+    },
+    molds:{
+        title: "New Mold",
+        icon: 'fas fa-cubes',
+        id:"data-view-item",
+        onclick: "dataInputTableView('moldModel')",
+    },
+}
+
+var dataViewItems = {
+    robots:{
+        title: "Robots",
+        icon: 'fas fa-robot',
+        id:"data-view-item",
+        onclick: "open_db_document('robotModel')",
+    },
+
+    products:{
+        title: "Products",
+        icon: 'fas fa-plus-square',
+        id:"data-view-item",
+        onclick: "open_db_document('productModel')",
+    },
+
+    clients:{
+        title: "Clients",
+        icon: 'fas fa-handshake',
+        id:"data-view-item",
+        onclick: "open_db_document('clientModel')",
+    },
+    setups:{
+        title: "Setups",
+        icon: 'fas fa-wrench',
+        id:"data-view-item",
+        onclick: "open_db_document('setupModel')",
+    },
+    molds:{
+        title: "Molds",
+        icon: 'fas fa-cubes',
+        id:"data-view-item",
+        onclick: "open_db_document('moldModel')",
+    },
+}
+
 
 $(document).ready(function(){
     populateSidebar();
 })
 
+function open_db_document(model){
+    console.log(model)
+    fetch('http://104.236.0.12/db/document/' + model)
+    .then(response => response.json())
+    .then((data) => {
+        var documentData = data;
+
+        $.get( "/view/dataView.html", ( data ) => {
+            clearMainContentContainer()
+            $("#main-content-container").append(data);
+            document.getElementById("data-view-table").setAttribute('data', JSON.stringify(documentData.data))
+        });
+
+
+    })
+}
 
 function populateSidebar(){
     console.log(sidebarItems)
@@ -49,7 +135,7 @@ function formsView(){
     });
 }
 
-function dataTableView(model){
+function dataInputTableView(model){
     $.get("/view/dataFormView.html", (data) => {
         clearMainContentContainer();
         $("#main-content-container").append(data);
@@ -68,7 +154,7 @@ function dataFormView(form){
 }
 
 function dataView(){
-    $.get( "/view/home.html", function( data ) {
+    $.get( "/view/data.html", function( data ) {
         clearMainContentContainer()
         $("#main-content-container").append(data);
     });
@@ -78,7 +164,6 @@ function clearMainContentContainer(){
     $('#main-content-container').empty();
 }
 
-function submitModelData(ev){
-    console.log(ev)
-    
-}
+
+
+
