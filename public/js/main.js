@@ -96,19 +96,25 @@ $(document).ready(function(){
 
 function open_db_document(model){
     console.log(model)
-    fetch('http://104.236.0.12/db/document/' + model)
-    .then(response => response.json())
-    .then((data) => {
-        var documentData = data;
+    $.get( "/view/dataView.html", ( data ) => {
+        clearMainContentContainer()
+        $("#main-content-container").append(data);
+        //document.getElementById("data-view-table").setAttribute('data', JSON.stringify(documentData.data))
+        document.getElementById("data-view-table").setAttribute('model', model)
+    });
+    //fetch('http://104.236.0.12/db/document/' + model)
+    //.then(response => response.json())
+    //.then((data) => {
+    //    var documentData = data;
 
-        $.get( "/view/dataView.html", ( data ) => {
-            clearMainContentContainer()
-            $("#main-content-container").append(data);
-            document.getElementById("data-view-table").setAttribute('data', JSON.stringify(documentData.data))
-        });
+    //    $.get( "/view/dataView.html", ( data ) => {
+    //        clearMainContentContainer()
+    //        $("#main-content-container").append(data);
+    //        document.getElementById("data-view-table").setAttribute('data', JSON.stringify(documentData.data))
+    //    });
+ 
 
-
-    })
+    //})
 }
 
 function populateSidebar(){
@@ -167,3 +173,22 @@ function clearMainContentContainer(){
 
 
 
+function getSchema(model){
+  return new Promise(resolve => {
+    fetch('http://104.236.0.12/modelFeilds/' + model)
+      .then(response => response.json())
+      .then((data) => {
+        resolve(data)
+      })
+  })
+}
+
+function getDocument(model){
+    return new Promise(resolve => {
+    fetch('http://104.236.0.12/db/document/' + model)
+      .then(response => response.json())
+      .then((data) => {
+        resolve(data.data)
+      })
+    })
+}

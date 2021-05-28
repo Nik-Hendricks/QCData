@@ -1,9 +1,34 @@
+class InputCheckbox extends HTMLElement{
+  constructor(){
+    super();
+      this.innerHTML = `<label class="container"><input type="checkbox"><span class="checkmark"></span></label>`;
+    
+
+
+  }
+
+  
+  connectedCallback(){
+    var scope = this;
+    this.onclick = () => {
+      console.log(scope.getAttribute('checked'))
+      if(scope.getAttribute('checked') === null){
+        console.log('checke');
+        scope.setAttribute('checked', true)
+      }
+      if(scope.getAttribute('checked') == true){
+        scope.removeAttribute('checked')
+      }
+
+    }
+  }
+
+}
+
 
 class DataFormControl extends HTMLElement{
     constructor(){
         super();
-
-
         getHTML('dataFormControl.html').then(html => {
             this.innerHTML = html
         }).then(() => {
@@ -52,10 +77,13 @@ class DataViewTable extends HTMLElement{
     getHTML("dataViewTable.html").then(html => {
       this.innerHTML = html;
     }).then(() => {
-      this.data = JSON.parse(this.getAttribute('data'))
+      this.model = this.getAttribute('model');
 
-      var table = document.getElementById("data-view-table-table");
-      prepareTable(table, this.data);
+      console.log(this.model)
+
+      var tableh = document.getElementById("data-view-table-thead");
+      var tableb = document.getElementById("data-view-table-tbody");
+      prepareTable(tableh, tableb, this.model);
 
 
 
@@ -68,9 +96,7 @@ class DataViewTable extends HTMLElement{
 class DataInputTable extends HTMLElement{
     constructor(){
         super();
-
-    
-
+        
         getHTML('dataInputTable.html').then(html => {
             this.innerHTML = html
         }).then(() => {
@@ -106,28 +132,19 @@ class DataInputTable extends HTMLElement{
                         </tr>
                     `)   
                 }
-                 setupSelect();
+                setupSelect();
 
               $( "#data-input-table-submit" ).click(() =>{ 
-
                 var recordData = {}
 
                 for(var key in data){
                   var inpt = document.getElementById(key)
-
-                var va = (inpt.value == ""? undefined : inpt.value);
-                console.log(va)
-                var vb = (va == 0 ? undefined : va)
-                var vc = (vb == 'on'? undefined : vb);
-
+                  var va = (inpt.value == ""? undefined : inpt.value);
+                  var vb = (va == 0 ? undefined : va)
+                  var vc = (vb == 'on'? undefined : vb);
                   recordData[key] = vc
                 }
-
-
-  
-
                 fetch(`http://104.236.0.12/db/${this.model}/insert`, {
-
                     method: 'POST',
                     body: JSON.stringify({"data": recordData}),
                     headers: {'Content-Type': 'application/json'}
@@ -164,33 +181,78 @@ function getHTML(file){
     })
 }
 
-function prepareTable(table, data){
-    console.log(data)
-    var table_columns = Object.size(data[0]);
-    var table_rows = Object.size(data);
-    console.log(table_columns)
-    console.log(table_rows)
+function prepareTable(tableh, tableb, model){
+  console.log(model)
 
-    var row = table.insertRow(-1)
 
-    var ci = 0;
-    var ri = 0;
+  var rowDataTypes = [];
+  var rowFeildNames = [];
 
-    for(var key in data[0]){
-        var cell = row.insertCell(ci)
-        cell.innerHTML = `<b>${key}</b>`
-        ci++
-    }
-    for(var keyA in data){
-        ci = 0;
-        var newRow = table.insertRow(-1)
-        for(var keyB in data[keyA]){
-            var record = data[keyA][keyB]
-            console.log(record);
-            var newCell = newRow.insertCell(ci)
-            newCell.innerHTML = record
+
+
+  getSchema(model).then(schema => {
+    getDocument(model).then(docs => {
+      var t_row = tableh.insertRow(-1);
+
+      for(var i in schema){
+          var cell = t_row.insertCell(0)
+          var collumnDataType = schema[i].instance;
+          var collumnFeildName = schema[i].path
+          console.log(collumnFeildName)
+          cell.innerHTML = `<b>${schema[i].path}</b>`
+          rowDataTypes.push(collumnDataType)
+          rowFeildNames.push(collumnFeildName);
+      }
+      var ri = 0;
+      for(var i in docs){
+        //make row
+        var row = tableb.insertRow(-1);
+        for(var j in rowDataTypes){
+        
+        var checked = (docs[i][rowFeildNames[j]] == undefined? 'checked': docs[i][rowFeildNames[j]])
+
+        console.log(checked)
+
+        var dataTypeInputs = {
+          Number: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}" type='text' placeholder='Number'/>`,
+          String: `<input id="${rowFeildNames[j]}${ri} " value="${docs[i][rowFeildNames[j]]}"type='text' placeholder='String'/>`,
+          Boolean: `<input-checkbox></input-checkbox>`,
+         // Boolean:`<label class="container"><input id="${rowFeildNames[j]}${ri}" ${checked} type="checkbox"><span class="checkmark"></span></label>`,
+          Date: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`,
+          Array: `<div class="custom-select" style="width:200px;"><select id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"><option value="0">Select:</option></select></div>`,
+          ObjectID: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type='text' disabled placeholder='ObjectId'/>`
         }
-    }
+          //make cell
+          var cell = row.insertCell(0)
+          cell.innerHTML = dataTypeInputs[rowDataTypes[j]]
+        }
+        ri++
+
+
+      }
+
+    })
+  })
+
+
+
+
+   // var table_columns = Object.size(data[0]);
+   // var table_rows = Object.size(data);
+   // var row = tableh.insertRow(-1)
+//
+   // for(var key in data[0]){
+   //     var cell = row.insertCell(0)
+   //     cell.innerHTML = `<b>${key}</b>`
+   // }
+   // for(var keyA in data){
+   //     var newRow = tableb.insertRow(-1)
+   //     for(var keyB in data[keyA]){
+   //         var record = data[keyA][keyB]
+   //         var newCell = newRow.insertCell(0)
+   //         newCell.innerHTML = record
+   //     }
+   // }
 
 }
 
@@ -289,7 +351,7 @@ Object.size = function(obj) {
   return size;
 };
 
-
+window.customElements.define('input-checkbox', InputCheckbox)
 window.customElements.define('data-view-table', DataViewTable);
 window.customElements.define("item-view", ItemView);
 window.customElements.define("data-table", DataInputTable)

@@ -38,33 +38,30 @@ http.listen(80, () => {
 //app.listen(81)
 app.post("/db/:model/insert", (req, res) => {
   var model = req.param('model');
-
-  console.log(req.body.data)
-
   var model = new modelMap[model](req.body.data)
-console.log(model)
-
-
   model.save();
-
   res.json({"data": "success"})
+})
 
+app.get(`/db/schema/:schema`, (req, res) => {
+  var schema = req.param('schema');
+  console.log(schema)
+  var model = modelMap[schema].schema
+
+  console.log(model)
+  res.json(model)
 })
 
 app.get("/db/document/:model", (req, res) => {
   var model = req.param('model');
-  console.log(model);
-
   var queryModel = modelMap[model];
   var sendDoc = []
 
   if(queryModel){
     queryModel.find((err, docs) => {
       for(var key in docs){
-        console.log(docs[key])
         sendDoc.push(docs[key])
       }
-
       res.json({"data": sendDoc})
     })
   }
@@ -74,15 +71,13 @@ app.get("/db/document/:model", (req, res) => {
 
 app.get("/modelFeilds/:model", (req, res) => {
   var model = req.param('model');
-  console.log(model)
-  console.log(modelMap[model])
 
-res.json(modelMap[model].schema.paths)
+  res.json(modelMap[model].schema.paths)
 })
 
 app.get("/view/:file",(req, res) => {
     var file = req.param('file');
-    console.log(file)
+
     res.header({
       'Content-Type': 'text/html',
       'Content-Size': getFilesizeInBytes(__dirname + '/public/views/' + file)
@@ -92,7 +87,7 @@ app.get("/view/:file",(req, res) => {
 
 app.get("/component/:file",(req, res) => {
     var file = req.param('file');
-    console.log(file)
+
     res.header({
       'Content-Type': 'text/html',
       'Content-Size': getFilesizeInBytes(__dirname + '/public/components/' + file)
@@ -102,7 +97,7 @@ app.get("/component/:file",(req, res) => {
 
 app.get("/form/:file",(req, res) => {
   var file = req.param('file');
-  console.log(file)
+
   res.header({
     'Content-Type': 'text/html',
     'Content-Size': getFilesizeInBytes(__dirname + '/public/forms/' + file)
