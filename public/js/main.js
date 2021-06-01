@@ -1,22 +1,34 @@
-var sidebarItems = {
+const sidebarItems = {
     home:{
         title: "Home",
         icon: 'fas fa-home',
         id: 'home-item',
         onclick: "homeView()"
     },
+    overview:{
+        title: "Overview",
+        icon: "fas fa-eye",
+        id: "overview-item",
+        onclick: "overviewView()"
+    },
     forms:{
         title: "Forms",
         icon: 'fas fa-file-alt',
-        id:"your-songs-item",
+        id:"forms-item",
         onclick:"formsView()"
     },
     data:{
         title: "Data",
         icon: 'fas fa-database',
-        id:"playlist-item",
+        id:"data-item",
         onclick: "dataView()",
     },
+    createForm:{
+        title: "Create Form",
+        icon: "fas fa-file",
+        id: "createForm-item",
+        onclick: "createFormView()"
+    }
 }
 
 var dataInputItems = {
@@ -91,7 +103,7 @@ var dataViewItems = {
 
 
 $(document).ready(function(){
-    populateSidebar();
+    //
 })
 
 function open_db_document(model){
@@ -117,15 +129,7 @@ function open_db_document(model){
     //})
 }
 
-function populateSidebar(){
-    console.log(sidebarItems)
-    for (var key of Object.keys(sidebarItems)) {
-        item = sidebarItems[key];
-        console.log(sidebarItems[key].title)
-        $("#sidebar-items-container").append(`<div id="${item.id}" onclick="${item.onclick}" class="sidebar-item"><i class="${item.icon}"></i><p>${item.title}</p></div>`)
-    
-    }
-}
+
 
 function homeView(){
     $.get( "/view/home.html", function( data ) {
@@ -164,6 +168,20 @@ function dataView(){
         clearMainContentContainer()
         $("#main-content-container").append(data);
     });
+}
+
+function createFormView(){
+    $.get("/view/createForm.html", (data) => {
+        clearMainContentContainer();
+        $("#main-content-container").append(data);
+    })
+}
+
+function overviewView(){
+    $.get("/view/overviewView.html", (data) => {
+        clearMainContentContainer();
+        $("#main-content-container").append(data);
+    })
 }
 
 function clearMainContentContainer(){

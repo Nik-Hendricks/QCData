@@ -14,6 +14,7 @@ let moldSchema = new mongoose.Schema({
   ready: Boolean,
   moldNumber: Number,
   moldLocation: String,
+  pictures: Array,
 })
 
 module.exports = mongoose.model('mold', moldSchema)

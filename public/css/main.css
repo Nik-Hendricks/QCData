@@ -69,8 +69,9 @@ body{
 }
 
 .sidebar-item p{
+    position: absolute;
     color:var(--grey-2);
-    text-align: center;
+    left:100px;
     padding:0;
     margin:0;
     line-height: var(--sidebar-item-height);  
@@ -81,6 +82,8 @@ body{
     position: relative;
     float:left;
     left:20;
+    padding:0;
+    margin:0;
     color:var(--grey-2);
     font-size:20;
     line-height: var(--sidebar-item-height);
@@ -92,7 +95,7 @@ body{
 }
 
 .sidebar-logo-container{
-    position: absolute  ;
+    position: absolute;
     top:10px;
     left:10px;
     right:10px;
@@ -111,6 +114,7 @@ body{
     background:var(--grey-2);
     padding-right:40px;
     padding-left:40px;
+    overflow:scroll;
 }
 
 .main-content-container p{
@@ -224,8 +228,8 @@ body{
 }
 
 .data-table-container{
-    position: absolute;
-    top:80px;
+    position: relative;
+    top:0px;
     right:20px;
     left:20px;
     bottom:20px;
@@ -251,18 +255,18 @@ body{
 }
 
 .data-table-body{
-    position:absolute;
-    top:50;
+    position:relative;
+    top:0;
     right:0;
     left:0;
-    bottom:50px;
+    bottom:0px;
     background:var(--grey-1);
     overflow:scroll;
 }
 
 .data-table-footer{
     position:absolute;
-    bottom:0px;
+    bottom:-50px;
     left:0px;
     right:0px;
     height:50px;
@@ -483,11 +487,12 @@ body{
   }
 
   .item-view-container{
-      position: absolute;
-      top:80px;
-      right:20px;
-      left:20px;
+      position: relative;
+      top:0px;
+      right:0px;
+      left:0px;
       bottom:20px;
+      height: auto;;
   }
 
   .item-view-header{
@@ -510,17 +515,17 @@ body{
 }
 
   .item-view-body{
-    position:absolute;
-    top:50;
+    position:relative;
+    top:0;
     right:0;
     left:0;
-    bottom:50px;
-
-    overflow:scroll;
+    bottom:0;
+    height:auto;
+    width:100%;
   }
 
   .item-view-footer{
-    position:absolute;
+    position:relative;
     bottom:0px;
     left:0px;
     right:0px;
@@ -532,6 +537,7 @@ body{
 
   .item-view-item{
     position: relative;
+    display:inline-block;
     top:20px;
     left:20px;
     height:200px;
@@ -542,7 +548,6 @@ body{
     text-align: center;
     vertical-align: middle;
     border-radius: 10px;
-    float:left;
     margin-left:20px;
     margin-top:20px;
   }
@@ -575,6 +580,14 @@ body{
   background: var(--grey-1);
   border-top-left-radius: 10px;
   border-top-right-radius:10px;
+}
+
+.data-view-table-header i{
+  position:relative;
+  font-size:35px;
+  margin:7.5px;
+  margin-left:15px;
+  color:var(--blue-1);
 }
 
 .data-view-table-body{
@@ -615,12 +628,12 @@ data-view-table td{
   padding:5px;
   border: 1px solid black;
   white-space: nowrap;
+  height:50px !important;
 }
 
 
 
 data-view-table thead{
-  background:var(--blue-1);
   color: white;
   position:sticky;
   top:0px;
@@ -651,4 +664,22 @@ data-view-table input[type="date"]{
   height:40px;
   border-radius:5px;
   background:var(--blue-2);
+}
+
+
+dropdown-view{
+  position:absolute;
+  right:40px;
+  left:40px;
+  margin-top:60px;
+  height:50px;
+  overflow:hidden;
+  background:var(--grey-1);
+}
+
+
+
+.expanded{
+
+  height:auto;
 }

@@ -2,24 +2,63 @@ class InputCheckbox extends HTMLElement{
   constructor(){
     super();
       this.innerHTML = `<label class="container"><input type="checkbox"><span class="checkmark"></span></label>`;
-    
-
-
   }
-
   
   connectedCallback(){
     var scope = this;
-    this.onclick = () => {
-      console.log(scope.getAttribute('checked'))
-      if(scope.getAttribute('checked') === null){
-        console.log('checke');
-        scope.setAttribute('checked', true)
-      }
-      if(scope.getAttribute('checked') == true){
-        scope.removeAttribute('checked')
+      console.log(this.checked)
+      //this.checked = (this.hasAttribute('checked')) ? false : true;
+      this.onclick = () => {
+
+      $("input").prop("checked",$(this).prop("checked"));
+
+        
+    }
+  }
+
+}
+
+class DropdownView extends HTMLElement{
+  constructor(){
+    super();
+  }
+
+  connectedCallback(){
+    console.log(this.getAttribute('html'))
+    getView(this.getAttribute('html')).then((data) => {
+      console.log(data)
+      this.innerHTML = data;
+
+      this.onclick = () => {
+        console.log('click')
+        $(this).toggleClass('expanded')
       }
 
+    })
+  }
+
+}
+
+class Sidebar extends HTMLElement{
+  constructor(){
+    super();
+  }
+
+  connectedCallback(){
+    this.innerHTML = `
+    <div class="sidebar-container" id="sidebar-container">
+      <div class="sidebar-logo-container">
+      </div>
+
+      <div class="sidebar-items-container" id="sidebar-items-container">
+      </div>
+    </div>`
+
+    console.log(sidebarItems)
+    for (var key of Object.keys(sidebarItems)) {
+      var item = sidebarItems[key];
+      console.log(sidebarItems[key].title)
+      $("#sidebar-items-container").append(`<div id="${item.id}" onclick="${item.onclick}" class="sidebar-item"><i class="${item.icon}"></i><p>${item.title}</p></div>`)
     }
   }
 
@@ -45,11 +84,18 @@ class ItemView extends HTMLElement{
     constructor(){
         super();
 
+        this.itemMap = {dataViewItems, dataInputItems}
+
         getHTML('itemView.html').then(html => {
             this.innerHTML = html;
         }).then(() => {
-          console.log(JSON.parse(this.getAttribute('items')))
-          var data = JSON.parse(this.getAttribute('items'))
+        console.log(this.getAttribute('item-set'))
+
+        this.items = this.itemMap[this.getAttribute('item-set')];
+
+
+
+          var data = this.items
           for(var key in data){
 
             console.log(data[key])
@@ -58,7 +104,7 @@ class ItemView extends HTMLElement{
             var icon = data[key].icon;
             var title = data[key].title;
 
-            $("#item-view-body").append(`
+            $(this).find("#item-view-body").append(`
             <div class="item-view-item" onclick="${onclick}">
               <i class="${icon}"></i>
               <p>${title}</p>
@@ -68,6 +114,8 @@ class ItemView extends HTMLElement{
 
         })
     }
+
+
 }
 
 class DataViewTable extends HTMLElement{
@@ -153,11 +201,6 @@ class DataInputTable extends HTMLElement{
               });
             })
 
-
-
-
-
-
         })
 
     }
@@ -171,6 +214,14 @@ function getForm(form){
             resolve(data)
         })
     })
+}
+
+function getView(file){
+  return new Promise(resolve => {
+    $.get(`/view/${file}`, (data) => {
+      resolve(data);
+    })
+  })
 }
 
 function getHTML(file){
@@ -209,20 +260,27 @@ function prepareTable(tableh, tableb, model){
         var row = tableb.insertRow(-1);
         for(var j in rowDataTypes){
         
-        var checked = (docs[i][rowFeildNames[j]] == undefined? 'checked': docs[i][rowFeildNames[j]])
+        //var checked = (docs[i][rowFeildNames[j]] == undefined? 'checked': docs[i][rowFeildNames[j]])
 
-        console.log(checked)
+       //console.log(checked)
+
+        if(j == Date){
+          var dateval = docs[i][rowFeildNames[j]]
+          console.log(dateval.substring(0, 9))
+        }
 
         var dataTypeInputs = {
           Number: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}" type='text' placeholder='Number'/>`,
           String: `<input id="${rowFeildNames[j]}${ri} " value="${docs[i][rowFeildNames[j]]}"type='text' placeholder='String'/>`,
-          Boolean: `<input-checkbox></input-checkbox>`,
+          Boolean: `<input-checkbox ></input-checkbox>`,
          // Boolean:`<label class="container"><input id="${rowFeildNames[j]}${ri}" ${checked} type="checkbox"><span class="checkmark"></span></label>`,
-          Date: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`,
+          Date: `<input id="${rowFeildNames[j]}${ri}" value="${dateval}"type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`,
           Array: `<div class="custom-select" style="width:200px;"><select id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"><option value="0">Select:</option></select></div>`,
           ObjectID: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type='text' disabled placeholder='ObjectId'/>`
         }
           //make cell
+
+
           var cell = row.insertCell(0)
           cell.innerHTML = dataTypeInputs[rowDataTypes[j]]
         }
@@ -351,6 +409,8 @@ Object.size = function(obj) {
   return size;
 };
 
+window.customElements.define("dropdown-view", DropdownView);
+window.customElements.define('custom-sidebar', Sidebar);
 window.customElements.define('input-checkbox', InputCheckbox)
 window.customElements.define('data-view-table', DataViewTable);
 window.customElements.define("item-view", ItemView);
