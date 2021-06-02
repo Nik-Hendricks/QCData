@@ -1,7 +1,7 @@
 let mongoose = require('mongoose')
 
 let machineSchema = new mongoose.Schema({
-    machineName: String,
+    name: String,
     currentJobs: Array,
 })
 

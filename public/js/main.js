@@ -28,7 +28,22 @@ const sidebarItems = {
         icon: "fas fa-file",
         id: "createForm-item",
         onclick: "createFormView()"
+    },
+    blueBook:{
+        title: "blueBook",
+        icon: "fas fa-file",
+        id: "createForm-item",
+        onclick: "blueBookView()"
     }
+}
+
+var newFormItems = {
+    qualitySheet:{
+        title: "Quality Sheet",
+        icon: 'fas fa-file',
+        id:"data-view-item",
+        onclick: ""
+    },
 }
 
 var dataInputItems = {
@@ -172,6 +187,13 @@ function dataView(){
 
 function createFormView(){
     $.get("/view/createForm.html", (data) => {
+        clearMainContentContainer();
+        $("#main-content-container").append(data);
+    })
+}
+
+function blueBookView(){
+    $.get("/view/bluebook.html", (data) => {
         clearMainContentContainer();
         $("#main-content-container").append(data);
     })

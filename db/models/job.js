@@ -2,8 +2,7 @@ let mongoose = require('mongoose') , Schema = mongoose.Schema
 let client = require('./client.js')
 
 let jobSchema = new mongoose.Schema({
-  jobName: String,
-  jobId: String,
+  name: String,
   jobClient: [{ type: Schema.ObjectId, ref: client.schema }],
 })
 

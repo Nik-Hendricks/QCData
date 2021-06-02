@@ -18,6 +18,69 @@ class InputCheckbox extends HTMLElement{
 
 }
 
+
+
+class DropdownSelector extends HTMLElement{
+
+  constructor(){
+    super();
+    this.items1 = {
+                  0:{id:1, name: "asdf"},
+                  1:{id:1, name: "test1"},
+                  2:{id:1, name: "test2"},
+                  3:{id:1, name: "asdf"},
+                  4:{id:1, name: "test1"},
+                  5:{id:1, name: "test2"},
+                  6:{id:1, name: "asdf"},
+                  7:{id:1, name: "test1"},
+                  8:{id:1, name: "test2"},
+                  9:{id:1, name: "asdf"},
+                  10:{id:1, name: "test1"},
+                  11:{id:1, name: "test2"},
+                  12:{id:1, name: "asdf"},
+                  13:{id:1, name: "test1"},
+                  14:{id:1, name: "test2"},
+                  }
+  }
+
+
+  connectedCallback(){
+      if(this.getAttribute('items') == 'model' && this.hasAttribute('model')){
+        getDocument(this.getAttribute('model')).then(doc => {
+          console.log(doc)
+          this.items = doc;
+        })
+
+      }else{
+        console.log(this.getAttribute('items'))
+        this.items = JSON.parse(this.getAttribute('items'))
+      }
+
+    this.innerHTML = `
+      <button>Test</button>
+      <input type="text" placeholder="search"/>
+      <div class="selector-items-container">
+      </div>
+    `
+
+    
+    $(this).find("button").click((ev) => {
+      this.fire(ev);
+      $(this).find(".selector-items-container").empty();
+      for(var i = 0; i < Object.size(this.items); i++){ 
+        $(this).find(".selector-items-container").append(`<div><p>${this.items[i].name}</p></div>`)
+      }
+    })
+
+  }
+
+
+
+  fire(ev){
+    $(this).toggleClass('opened')
+  }
+}
+
 class DropdownView extends HTMLElement{
   constructor(){
     super();
@@ -83,19 +146,52 @@ class DataFormControl extends HTMLElement{
 class ItemView extends HTMLElement{
     constructor(){
         super();
-
-        this.itemMap = {dataViewItems, dataInputItems}
+        var scope = this;
+        this.itemMap = {dataViewItems, dataInputItems, newFormItems}
 
         getHTML('itemView.html').then(html => {
             this.innerHTML = html;
         }).then(() => {
-        console.log(this.getAttribute('item-set'))
-
-        this.items = this.itemMap[this.getAttribute('item-set')];
 
 
+        if(this.getAttribute('item-set') == 'model' && this.hasAttribute('model')){
+          console.log(this.getAttribute('model'))
+          getDocument(this.getAttribute('model')).then(doc => {
+            console.log(doc)
+            this.items = doc;
+          }).then(() => {
+            this.items.forEach(item => {
+              var onclick = 'data[key].onclick';
+              var icon = 'data[key].icon';
+              var title = item.partName;
+              this.appendItem('', item.partName,'fas fa-file')
 
-          var data = this.items
+              //this.loadData(this.items)
+            });
+          })
+        }else{
+          var data = this.itemMap[this.getAttribute('item-set')];
+          this.loadData(data)
+        }
+
+
+
+        })
+    }
+
+  appendItem(onclick, title, icon){
+    $(this).find("#item-view-body").append(`
+      <div class="item-view-item" onclick="${onclick}">
+        <i class="${icon}"></i>
+        <p>${title}</p>
+      </div>
+    `)
+  }
+
+  loadData(data){
+    
+
+          console.log(this.getAttribute('item-set'))
           for(var key in data){
 
             console.log(data[key])
@@ -111,10 +207,7 @@ class ItemView extends HTMLElement{
             </div>
             `)
           }
-
-        })
-    }
-
+  }
 
 }
 
@@ -170,7 +263,7 @@ class DataInputTable extends HTMLElement{
                         String: `<input id="${data[key].path}"type='text' placeholder='String'/>`,
                         Boolean:`<label class="container"><input id="${data[key].path}"type="checkbox"><span class="checkmark"></span></label>`,
                         Date: `<input id="${data[key].path}"type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`,
-                        Array: `<div class="custom-select" style="width:200px;"><select id="${data[key].path}"><option value="0">Select:</option></select></div>`,
+                        Array: `<dropdown-selector items="model" model="robotModel"></dropdown-selector>`,
                         ObjectID: `<input id="${data[key].path}"type='text' disabled placeholder='ObjectId'/>`
                     }
 
@@ -275,7 +368,7 @@ function prepareTable(tableh, tableb, model){
           Boolean: `<input-checkbox ></input-checkbox>`,
          // Boolean:`<label class="container"><input id="${rowFeildNames[j]}${ri}" ${checked} type="checkbox"><span class="checkmark"></span></label>`,
           Date: `<input id="${rowFeildNames[j]}${ri}" value="${dateval}"type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`,
-          Array: `<div class="custom-select" style="width:200px;"><select id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"><option value="0">Select:</option></select></div>`,
+          Array: `<dropdown-selector items="model" model="moldModel"></dropdown-selector>`,
           ObjectID: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type='text' disabled placeholder='ObjectId'/>`
         }
           //make cell
@@ -409,6 +502,7 @@ Object.size = function(obj) {
   return size;
 };
 
+window.customElements.define('dropdown-selector', DropdownSelector);
 window.customElements.define("dropdown-view", DropdownView);
 window.customElements.define('custom-sidebar', Sidebar);
 window.customElements.define('input-checkbox', InputCheckbox)

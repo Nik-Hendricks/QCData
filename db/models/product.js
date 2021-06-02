@@ -1,7 +1,7 @@
 let mongoose = require('mongoose')
 
 let productSchema = new mongoose.Schema({
-  partName: String,
+  name: String,
   partRev: Number,
   partNumber:Number,
   jobNumber:Number,

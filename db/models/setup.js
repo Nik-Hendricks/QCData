@@ -1,8 +1,7 @@
 let mongoose = require('mongoose')
 
 let setupSchema = new mongoose.Schema({
-  setupName: String,
-  setupId: String,
+  name: String,
   setupJob: Array
 })
 

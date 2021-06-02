@@ -4,10 +4,11 @@ let uniqid = require('uniqid')
 
 
 let clientSchema = new mongoose.Schema({
-  clientName: String,
-  clientId: String,
+  name: String,
   clientPhoneNumber: Number,
+  clientAdress: String,
   clientJobs: [{ type: Schema.ObjectId, ref: job.schema }],
 })
 
-module.exports = mongoose.model('client', clientSchema)
+console.log(clientSchema)
+module.exports = mongoose.model('client', clientSchema);
