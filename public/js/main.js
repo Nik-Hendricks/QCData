@@ -37,6 +37,29 @@ const sidebarItems = {
     }
 }
 
+const blueBookItems1 = {
+    SetUp:{
+        title: "Pre Production",
+        icon: 'fas fa-home',
+        id: 'home-item',
+        onclick: "blueBookPreProductionView()"
+    },
+    overview:{
+        title: "Production",
+        icon: "fas fa-eye",
+        id: "overview-item",
+        onclick: "blueBookInProductionView()"
+    },
+    forms:{
+        title: "Post Production",
+        icon: 'fas fa-file-alt',
+        id:"forms-item",
+        onclick:"blueBookPostProductionView()"
+    },
+}
+
+
+
 var newFormItems = {
     qualitySheet:{
         title: "Quality Sheet",
@@ -146,6 +169,7 @@ function open_db_document(model){
 
 
 
+
 function homeView(){
     $.get( "/view/home.html", function( data ) {
         clearMainContentContainer()
@@ -194,6 +218,27 @@ function createFormView(){
 
 function blueBookView(){
     $.get("/view/bluebook.html", (data) => {
+        clearMainContentContainer();
+        $("#main-content-container").append(data);
+    })
+}
+
+function blueBookInProductionView(){
+    $.get("/view/bluebook_in_production_view.html", (data) => {
+        clearMainContentContainer();
+        $("#main-content-container").append(data);
+    })
+}
+
+function blueBookPostProductionView(){
+    $.get("/view/bluebook_post_production_view.html", (data) => {
+        clearMainContentContainer();
+        $("#main-content-container").append(data);
+    })
+}
+
+function blueBookPreProductionView(){
+    $.get("/view/bluebook_pre_production_view.html", (data) => {
         clearMainContentContainer();
         $("#main-content-container").append(data);
     })
