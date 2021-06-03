@@ -24,23 +24,7 @@ class DropdownSelector extends HTMLElement{
 
   constructor(){
     super();
-    this.items1 = {
-                  0:{id:1, name: "asdf"},
-                  1:{id:1, name: "test1"},
-                  2:{id:1, name: "test2"},
-                  3:{id:1, name: "asdf"},
-                  4:{id:1, name: "test1"},
-                  5:{id:1, name: "test2"},
-                  6:{id:1, name: "asdf"},
-                  7:{id:1, name: "test1"},
-                  8:{id:1, name: "test2"},
-                  9:{id:1, name: "asdf"},
-                  10:{id:1, name: "test1"},
-                  11:{id:1, name: "test2"},
-                  12:{id:1, name: "asdf"},
-                  13:{id:1, name: "test1"},
-                  14:{id:1, name: "test2"},
-                  }
+    this.setAttribute('value' , undefined);
   }
 
 
@@ -57,9 +41,11 @@ class DropdownSelector extends HTMLElement{
       }
 
     this.innerHTML = `
-      <button>Test</button>
-      <input type="text" placeholder="search"/>
-      <div class="selector-items-container">
+      <div class="dropdown-selector-container">
+        <button>Test</button>
+        <input type="text" placeholder="search"/>
+        <div class="selector-items-container">
+        </div>
       </div>
     `
 
@@ -68,7 +54,7 @@ class DropdownSelector extends HTMLElement{
       this.fire(ev);
       $(this).find(".selector-items-container").empty();
       for(var i = 0; i < Object.size(this.items); i++){ 
-        $(this).find(".selector-items-container").append(`<div><p>${this.items[i].name}</p></div>`)
+        $(this).find(".selector-items-container").append(`<div id="${this.items[i]._id}"><p>${this.items[i].name}</p></div>`)
       }
     })
 
@@ -263,7 +249,7 @@ class DataInputTable extends HTMLElement{
                         String: `<input id="${data[key].path}"type='text' placeholder='String'/>`,
                         Boolean:`<label class="container"><input id="${data[key].path}"type="checkbox"><span class="checkmark"></span></label>`,
                         Date: `<input id="${data[key].path}"type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`,
-                        Array: `<dropdown-selector items="model" model="robotModel"></dropdown-selector>`,
+                        Array: `<dropdown-selector id="${data[key].path}" items="model" model="robotModel"></dropdown-selector>`,
                         ObjectID: `<input id="${data[key].path}"type='text' disabled placeholder='ObjectId'/>`
                     }
 
@@ -368,7 +354,7 @@ function prepareTable(tableh, tableb, model){
           Boolean: `<input-checkbox ></input-checkbox>`,
          // Boolean:`<label class="container"><input id="${rowFeildNames[j]}${ri}" ${checked} type="checkbox"><span class="checkmark"></span></label>`,
           Date: `<input id="${rowFeildNames[j]}${ri}" value="${dateval}"type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`,
-          Array: `<dropdown-selector items="model" model="moldModel"></dropdown-selector>`,
+          Array: `<dropdown-selector id="${rowFeildNames[j]}${ri}" items="model" model="moldModel"></dropdown-selector>`,
           ObjectID: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type='text' disabled placeholder='ObjectId'/>`
         }
           //make cell
