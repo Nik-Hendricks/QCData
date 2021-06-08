@@ -1,5 +1,8 @@
 
 
+
+
+
 class InputCheckbox extends HTMLElement{
   constructor(){
     super();
@@ -23,36 +26,34 @@ class XSpreadsheet extends HTMLElement{
     this.sheet = this.getAttribute("sheet");
     this.ppap = this.getAttribute("ppap");
     this.innerHTML = '<div class="luckysheet-container"><div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;"></div></div>'
+    this.dataValues = []
   }
 
   connectedCallback(){
     get_row_by_id('productModel', this.product_UID).then(part => {
       prepareLuckyChart(this.sheet, this.ppap).then(ls => {
-
         var data_parse_range = 50;
-  
-        for(var i = 0; i < data_parse_range; i++){
-          for(var j = 0; j < data_parse_range; j++){
 
-            var cell_value = String(ls.getCellValue(i, j));
-            if(cell_value != 'null'){
-
-              console.log(part.partData)
-
-
-              console.log(String(parseTpl(cell_value, part.partData)).split("")[0])
-              var p = (parseTpl(cell_value, part.partData).split("")[0] == "$") ? "" : parseTpl(cell_value, part.partData);
-              console.log(p)
-              ls.setCellValue(i, j, p)
-
-
+        for(var x = 0; x < ls.getAllSheets().length; x++){
+          ls.setSheetActive(x);
+          for(var i = 0; i < data_parse_range; i++){
+            for(var j = 0; j < data_parse_range; j++){
+              var cell_value = String(ls.getCellValue(i, j));
+              var first_char = cell_value.split("")[0];
+              if(cell_value != 'null' && first_char == "$"){
+                var p = parseTpl(cell_value, part.productData);
+                this.dataValues.push({sheet:x, x: j, y: i, value: p})
+                ls.setCellValue(i, j, p)
+              }
             }
           }
         }
+        ls.setSheetActive(0)
+        console.log(this.dataValues)
       })
     });
-
   }
+
 }
 
 
@@ -235,8 +236,8 @@ class ItemView extends HTMLElement{
             this.items.forEach(item => {
               var onclick = `show_xlsx_sheets('${item._id}')`;
               var icon = 'data[key].icon';
-              var title = item.partName;
-              this.appendItem(onclick, item.partName,'fas fa-file')
+              var title = item.name;
+              this.appendItem(onclick, title,'fas fa-file')
             });
           })
         }else{
@@ -325,7 +326,7 @@ class DataInputTable extends HTMLElement{
                         Boolean:`<label class="container"><input id="${data[key].path}"type="checkbox"><span class="checkmark"></span></label>`,
                         Date: `<input id="${data[key].path}"type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`,
                         Array: `<dropdown-selector id="${data[key].path}" items="model" model="robotModel"></dropdown-selector>`,
-                        ObjectID: `<input id="${data[key].path}"type='text' disabled placeholder='ObjectId'/>`,
+                        ObjectID: `<input id="${data[key].path}"type='text'  placeholder='ObjectId'/>`,
                         Mixed: `<input id="${data[key].path}"type='text'  placeholder='Object'/>`
                     }
 
@@ -454,7 +455,7 @@ function prepareTable(tableh, tableb, model){
           Boolean: `<input-checkbox ></input-checkbox>`,
           Date: `<input id="${rowFeildNames[j]}${ri}" value="${dateval}"type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`,
           Array: `<dropdown-selector id="${rowFeildNames[j]}${ri}" items="model" model="moldModel"></dropdown-selector>`,
-          ObjectID: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type='text' disabled placeholder='ObjectId'/>`,
+          ObjectID: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type='text'  placeholder='ObjectId'/>`,
           Object: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type='text'  placeholder='Object'/>`
         }
           //make cell

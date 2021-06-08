@@ -140,6 +140,13 @@ var dataInputItems = {
         onclick: "dataInputTableView('productModel')",
     },
 
+    productData:{
+        title: "New Product Data",
+        icon: 'fas fa-plus-square',
+        id:"data-view-item",
+        onclick: "dataInputTableView('productDataModel')",
+    },
+
     clients:{
         title: "New Client",
         icon: 'fas fa-handshake',
@@ -173,6 +180,13 @@ var dataViewItems = {
         icon: 'fas fa-plus-square',
         id:"data-view-item",
         onclick: "open_db_document('productModel')",
+    },
+
+    productData:{
+        title: "Product Data",
+        icon: 'fas fa-plus-square',
+        id:"data-view-item",
+        onclick: "open_db_document('productDataModel')",
     },
 
     clients:{

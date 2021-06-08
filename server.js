@@ -11,7 +11,8 @@ const jobModel = require('./db/models/job.js');
 const machineModel = require('./db/models/machine.js');
 const setupModel = require('./db/models/setup.js');
 const moldModel = require('./db/models/mold.js');
-const productModel = require('./db/models/product.js')
+const productModel = require('./db/models/product.js');
+const productDataModel = require('./db/models/productData.js')
 
 const EXCEL_SHEETS = require('./db/models/EXCEL_SHEETS.js')
 
@@ -58,7 +59,8 @@ const modelMap = {
   "setupModel": setupModel,
   "machineModel" : machineModel,
   "moldModel": moldModel,
-  "productModel": productModel
+  "productModel": productModel,
+  "productDataModel": productDataModel
 }
 app.use(
   express.urlencoded({
@@ -192,7 +194,9 @@ app.get('/', (req, res) => {
 
 function getRowByID(db, id){
   return new Promise(resolve => {
-    resolve(db.findById(id))
+    db.findById(id).populate('productData').exec((err, post) => {
+      resolve(post)
+    })
   })
 }
 
