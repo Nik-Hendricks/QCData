@@ -7,8 +7,8 @@ let productSchema = new mongoose.Schema({
   jobNumber:Number,
   checkFrequency: Number,
   measurableAttributes: Array,
-  visualAttributes: Array
-
+  visualAttributes: Array,
+  partData: Object
 })
 
 module.exports = mongoose.model('product', productSchema)

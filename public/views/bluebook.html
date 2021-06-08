@@ -1,14 +1,16 @@
 <h1 class="title-h1">Blue Book</h1>
 <dropdown-selector items="model" model="robotModel"></dropdown-selector>
-
-<p template="hello">
-    Hello <i>{name}</i>
-</p>
-
+<item-view id="item-view" item-set="blueBookItems1"></item-view>
 
 <script>
 
-var HelloTemplate = new Template(document.querySelector("[template=hello]"));
-var clone = HelloTemplate.clone({ name: "John Doe" }).append();
-clone.update({ name: "John Update" });
+//var t = `
+//<p template="hello">
+//    Hello <i>{name}</i>
+//</p>
+//`
+//
+//var HelloTemplate = new Template(document.querySelector("[template=hello]"));
+//var clone = HelloTemplate.clone({ name: "John Doe" }).append();
+//clone.update({ name: "John Update" });
 </script>

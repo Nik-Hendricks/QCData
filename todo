@@ -1,0 +1,35 @@
+- Project Scope
+    - Bridge QCM's current exel infastructure to be linked with mongo db in a nice way
+    - utilize PPAP procedure also bluebook ?
+
+-TODO
+    -Implement custom component for handling exel data.
+    -Implement ui and view paths effective for blue book and data navigation
+
+
+-Excel Bridge
+    - implement https://github.com/myliang/x-spreadsheet in a nice custom component
+    - refactor server to better handle spreadsheet data
+    - possibly implement more verbose REST API
+    - map out excel files to be used for each and every product
+        - this map will be used to populate files as new parts are created
+            - need to keep track of
+                - edited files
+                    - these are files that are edited therefore they need to be
+                    - stored in the database
+                - unedited / uncreated files
+                    - these files are not populated yet
+                    - therefore they do not need to be stored
+                    - instead they need to be populated from the 
+                    - excel sheet map to keep all files current
+    - all server / client interactons for excel should follow @done
+        - keep excel document reference stored in server @done
+            - should be excel sheet each data value populated with a unique identifier and denoted with a template string such as {{}} @done
+            - web app should then load the excel sheet and all part data stored in the database into the spreadsheet @done
+            
+    - all server / client interactons for excel should follow
+        - keep excel document reference stored in server
+        - if has_data = false 
+            - create new file following the template stored in mongodb
+        - if has_data = true
+            -  populate the data into the webapp

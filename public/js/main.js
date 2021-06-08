@@ -30,7 +30,7 @@ const sidebarItems = {
         onclick: "createFormView()"
     },
     blueBook:{
-        title: "blueBook",
+        title: "Blue Book",
         icon: "fas fa-file",
         id: "createForm-item",
         onclick: "blueBookView()"
@@ -40,25 +40,86 @@ const sidebarItems = {
 const blueBookItems1 = {
     SetUp:{
         title: "Pre Production",
-        icon: 'fas fa-home',
+        icon: 'fas fa-backward',
         id: 'home-item',
         onclick: "blueBookPreProductionView()"
     },
     overview:{
         title: "Production",
-        icon: "fas fa-eye",
+        icon: "fas fa-play",
         id: "overview-item",
         onclick: "blueBookInProductionView()"
     },
     forms:{
         title: "Post Production",
-        icon: 'fas fa-file-alt',
+        icon: 'fas fa-forward',
         id:"forms-item",
         onclick:"blueBookPostProductionView()"
     },
 }
 
+const blueBookPreProductionItems = {
+    setUp:{
+        title: "Set-up",
+        icon: 'fas fa-wrench',
+        id: 'home-item',
+        onclick: "blueBookPreProductionView()"
+    },
+    processing:{
+        title: "Processing",
+        icon: "fas fa-sync",
+        id: "overview-item",
+        onclick: "blueBookInProductionView()"
+    },
+    QCDocumentation:{
+        title: "QC Documentation",
+        icon: 'fas fa-file-alt',
+        id:"forms-item",
+        onclick:"blueBookPostProductionView()"
+    },
+    productionDocumentation:{
+        title: "Quality Documentation",
+        icon: 'far fa-file-alt',
+        id:"forms-item",
+        onclick:"blueBookPostProductionView()"
+    },
+}
 
+const blueBookPostProductionItems = {
+    SetUp:{
+        title: "Pre Production",
+        icon: 'fas fa-backward',
+        id: 'home-item',
+        onclick: "blueBookPreProductionView()"
+    },
+    overview:{
+        title: "Production",
+        icon: "fas fa-play",
+        id: "overview-item",
+        onclick: "blueBookInProductionView()"
+    },
+    forms:{
+        title: "Post Production",
+        icon: 'fas fa-forward',
+        id:"forms-item",
+        onclick:"blueBookPostProductionView()"
+    },
+}
+
+const blueBookInProductionItems = {
+    QCDocumentation:{
+        title: "QC Documentation",
+        icon: 'fas fa-file-alt',
+        id:"forms-item",
+        onclick:"blueBookPostProductionView()"
+    },
+    productionDocumentation:{
+        title: "Quality Documentation",
+        icon: 'far fa-file-alt',
+        id:"forms-item",
+        onclick:"blueBookPostProductionView()"
+    },
+}
 
 var newFormItems = {
     qualitySheet:{
@@ -171,10 +232,15 @@ function open_db_document(model){
 
 
 function homeView(){
-    $.get( "/view/home.html", function( data ) {
         clearMainContentContainer()
-        $("#main-content-container").append(data);
-    });
+
+        var _ppap = "PreProduction";
+        var sheet_name = "Setup";
+
+        $("#main-content-container").append(`
+            <h1 class="title-h1">Home</h1>
+            <spreadsheet-view product_UID="" sheet="QCDocumentation" ppap="PreProduction"></spreadsheet-view>
+        `);
 }
 
 function formsView(){
@@ -276,4 +342,47 @@ function getDocument(model){
         resolve(data.data)
       })
     })
+}
+
+const sheet_map = {
+  "PreProduction":{
+    "Setup":{
+      filename:'Set-up.xlsx',
+    },
+    "QCDocumentation":{
+      filename:'QC Documentation.xlsx',
+    },
+    "ProductionDocumentation":{
+      filename:'Production Documentation.xlsx',
+    },
+    "Processing":{
+      filename:'Processing.xlsx',
+    }
+  },
+
+  "PostProduction":{
+
+  },
+
+  "InProduction":{
+    "QualityDocumentation":{
+      filename: "Quality Documentation.xlsx"
+    },
+    "ProductionDocumentation":{
+      filename: "Production Documentation.xlsx"
+    },
+  }
+}
+
+function getXLSX(product_uid, sheet, ppap){
+    var sheet_name = sheet_map[ppap][sheet].filename
+    console.log(sheet_name)
+    return new Promise(resolve => {
+    fetch(`http://104.236.0.12/xlsx/${ppap}/${sheet_name}`)
+      .then(response => response.arrayBuffer())
+      .then((data) => {
+        resolve(data)
+      })
+    })
+    
 }

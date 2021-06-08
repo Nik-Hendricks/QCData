@@ -718,11 +718,6 @@ dropdown-selector input[type="text"]{
   outline:none;
 }
 
-
-
-
-
-
 dropdown-selector.opened{
   position:relative;
   width:200px;
@@ -732,8 +727,8 @@ dropdown-selector.opened{
 }
 
 dropdown-selector.opened .dropdown-selector-container{
-  position:absolute !important;
-  height:225px;
+  position:absolute;
+  height:235px;
   width:200px;
   border-radius:5px;
   background:var(--grey-1);
@@ -741,7 +736,8 @@ dropdown-selector.opened .dropdown-selector-container{
   padding:5px;
   top:0;
   left:0;
-  margin:0 !important;
+  right:0;
+  margin:0;
   z-index: 99;
 }
 
@@ -763,12 +759,13 @@ dropdown-selector.opened input[type="text"]{
 dropdown-selector.opened .selector-items-container{
   position:absolute;
   top:80;
-  width:200px;
+  width:190px;
   height: 150px;
   background:white;
   border-radius:5px;
   z-index: 99;
-  overflow: scroll;
+  overflow-y: scroll;
+  padding:5;
 }
 
 dropdown-selector.opened .selector-items-container div{
@@ -785,6 +782,11 @@ dropdown-selector.opened .selector-items-container div:hover{
   z-index: 99;
 }
 
+dropdown-selector.opened .selector-items-container div.selected{
+  background:#ccc;
+  border-radius:5px;
+}
+
 dropdown-selector.opened .selector-items-container div p{
   padding:0;
   margin:0;
@@ -792,4 +794,14 @@ dropdown-selector.opened .selector-items-container div p{
   text-align: center;
   line-height: 35px;
   z-index: 99;
+  cursor:pointer;
 }
+
+.luckysheet_info_detail{
+  display:none !important;
+}
+
+spreadsheet-view{
+  border-radius: 10px !important;
+}
+  

@@ -18,20 +18,78 @@ class InputCheckbox extends HTMLElement{
 
 }
 
+class XSpreadsheet extends HTMLElement{
+  constructor(){
+    super();
+    this.product_UID = this.getAttribute("product_UID");
+    this.sheet = this.getAttribute("sheet");
+    this.ppap = this.getAttribute("ppap");
+    this.innerHTML = '<div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;"></div>'
+  }
+
+  connectedCallback(){
+
+
+    
+    getXLSX(null, this.sheet, this.ppap).then(data => {
+      console.log(data)
+      
+           //Configuration item
+        LuckyExcel.transformExcelToLucky(data, function(exportJson, luckysheetfile){
+
+            // After obtaining the converted table data, use luckysheet to initialize or update the existing luckysheet workbook
+            // Note: Luckysheet needs to introduce a dependency package and initialize the table container before it can be used
+            luckysheet.create({
+                container: 'luckysheet', // luckysheet is the container id
+                data:exportJson.sheets,
+                title:exportJson.info.name,
+
+            });
+        });
+
+    })
+
+  }
+}
+
+function x_spreadsheet_format(wb){
+  const out = [];
+  for(var name in wb.Sheets){
+ // wb.Sheets.forEach(name => {
+    const o = {name, rows:{}};
+    const ws = wb.Sheets[name];
+    const aoa = XLSX.utils.sheet_to_json(ws, {raw: false, header:1});
+    aoa.forEach((r, i) => {
+      const cells = {};
+      r.forEach((c, j) => {
+        cells[j] = { text: c }
+      });
+      o.rows[i] = {
+        cells
+      };
+    })
+    out.push(o);
+  };
+  return out;
+}
 
 
 class DropdownSelector extends HTMLElement{
 
   constructor(){
     super();
-    this.setAttribute('value' , undefined);
+    this.value = []
+    this.uniqid = Date.now();
+    this.setAttribute('uniqid', this.uniqid);
   }
 
 
   connectedCallback(){
+
+      //if items attribute = model and has attribute model
       if(this.getAttribute('items') == 'model' && this.hasAttribute('model')){
+        //get document from database 
         getDocument(this.getAttribute('model')).then(doc => {
-          console.log(doc)
           this.items = doc;
         })
 
@@ -49,22 +107,66 @@ class DropdownSelector extends HTMLElement{
       </div>
     `
 
-    
     $(this).find("button").click((ev) => {
       this.fire(ev);
-      $(this).find(".selector-items-container").empty();
-      for(var i = 0; i < Object.size(this.items); i++){ 
-        $(this).find(".selector-items-container").append(`<div id="${this.items[i]._id}"><p>${this.items[i].name}</p></div>`)
-      }
     })
-
   }
 
 
+  click(id){
+    var selectedElements = this.querySelectorAll(`.selected`)
+
+    var values = []
+    selectedElements.forEach(item => {
+      values.push(item.getAttribute('uniqid'))
+    })
+    this.value = values;
+    this.setAttribute('value', this.value)
+  }
+
+  checkItemSelected(id){
+    console.log(id)
+      var selectedAttr = String(this.getAttribute('value')).split(',');
+      var retval = false;
+      if(selectedAttr != ["null"]){
+        for(var i = 0; i < selectedAttr.length; i++){
+          var selattr = String(selectedAttr[i])
+          if(this.uniqid+ selattr == `${id}`){
+            retval = true
+          }
+        }
+      }
+      return retval;
+  }
 
   fire(ev){
+    $(this).find(".selector-items-container").empty();
+    for(var i = 0; i < Object.size(this.items); i++){ 
+
+      var btnid = `${this.items[i]._id}`
+      var btnuniqid = `${this.uniqid}${btnid}`
+
+      //notice btnid is the acual unmodified id we are getting from the object
+      //btnuniqid is the btnid combined with the uniqid
+      //we use the btnuniqid to check if the item is selected or not by 
+      //adding the uniqid to the front the the btn id and running agains the uniqid
+      $(this).find(".selector-items-container").append(`<div uniqid="${btnid}" id="${btnuniqid}"><p>${this.items[i].name}</p></div>`)
+      if(this.checkItemSelected(btnuniqid)){
+        $(`#${btnuniqid}`).toggleClass('selected')
+      }
+
+      
+      $(`#${btnuniqid}`).click((ev) => {
+        $(ev.currentTarget).toggleClass('selected')
+        this.click(ev.target.parentElement.id)
+      })
+
+    }
     $(this).toggleClass('opened')
+    
   }
+
+
 }
 
 class DropdownView extends HTMLElement{
@@ -133,7 +235,7 @@ class ItemView extends HTMLElement{
     constructor(){
         super();
         var scope = this;
-        this.itemMap = {dataViewItems, dataInputItems, newFormItems}
+        this.itemMap = {dataViewItems, dataInputItems, newFormItems, blueBookItems1, blueBookPreProductionItems, blueBookPostProductionItems, blueBookInProductionItems}
 
         getHTML('itemView.html').then(html => {
             this.innerHTML = html;
@@ -270,6 +372,7 @@ class DataInputTable extends HTMLElement{
                   var vb = (va == 0 ? undefined : va)
                   var vc = (vb == 'on'? undefined : vb);
                   recordData[key] = vc
+                  console.log(vc)
                 }
                 fetch(`http://104.236.0.12/db/${this.model}/insert`, {
                     method: 'POST',
@@ -488,6 +591,7 @@ Object.size = function(obj) {
   return size;
 };
 
+window.customElements.define('spreadsheet-view', XSpreadsheet)
 window.customElements.define('dropdown-selector', DropdownSelector);
 window.customElements.define("dropdown-view", DropdownView);
 window.customElements.define('custom-sidebar', Sidebar);
