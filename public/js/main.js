@@ -374,6 +374,14 @@ function prepareLuckyChart(sheet, ppap){
     })
 }
 
+function get_row_by_id(db, id){
+    return new Promise(resolve => {
+        fetch(`http://104.236.0.12/get_row_by_id/${db}/${id}`, {
+            method: 'GET',
+        }).then(res => res.json())
+        .then(json => resolve(json));
+    })
+}
 
 function getXLSX(sheet, ppap){
     var sheet_name = sheet_map[ppap][sheet].filename

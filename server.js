@@ -63,25 +63,31 @@ const modelMap = {
 app.use(
   express.urlencoded({
     extended: true
-  })
-)
+  }))
 app.use(express.json());
 
 
 http.listen(80, () => {
   console.log("listening on 80")
-
 })
  
+app.get('/get_row_by_id/:db/:id', (req, res) => {
+  var db = req.param('db');
+  var id = req.param('id');
+  console.log(db)
+  if(modelMap[db]){
+    getRowByID(modelMap[db], id).then(resd => {
+      console.log(resd);
+      res.json(resd)
+    })
+  }
+})
 
-//app.listen(81)
 app.get('/xlsx/:ppap/:sheet_name', (req, res) => {
   var _ppap = req.param("ppap");
   var sheet_name = req.param('sheet_name')
   res.sendFile(`${__dirname}/public/excel/${_ppap}/${sheet_name}`)
 })
-
-
 
 app.post("/db/:model/insert", (req, res) => {
   var model = req.param('model');
@@ -184,14 +190,11 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html')
 })
 
-
-//function getExcelByID(UID){
-//  return new Promise(resolve => {
-    //resolve (  EXCEL_SHEETS.where('UID').equals(UID))
-    //const workbook = new Excel.Workbook();
-    //workbook.xlsx.readFile(filename);
-//  })
-//}
+function getRowByID(db, id){
+  return new Promise(resolve => {
+    resolve(db.findById(id))
+  })
+}
 
 function insertExcelByID(UID, partUID, data){
 var excel_sheet = {

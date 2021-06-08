@@ -26,31 +26,32 @@ class XSpreadsheet extends HTMLElement{
   }
 
   connectedCallback(){
-    prepareLuckyChart(this.sheet, this.ppap).then(ls => {
-      console.log(ls)
-      var data_parse_range = 50;
-      for(var i = 0; i < data_parse_range; i++){
-        for(var j = 0; j < data_parse_range; j++){
+    get_row_by_id('productModel', this.product_UID).then(part => {
+      prepareLuckyChart(this.sheet, this.ppap).then(ls => {
 
-          var cell_value = String(ls.getCellValue(i, j));
-          if(cell_value != 'null'){
+        var data_parse_range = 50;
+  
+        for(var i = 0; i < data_parse_range; i++){
+          for(var j = 0; j < data_parse_range; j++){
 
+            var cell_value = String(ls.getCellValue(i, j));
+            if(cell_value != 'null'){
 
-
-
-            var p = parseTpl(cell_value, { 
-              name: 'John',
-              galaxy: 'Milky Way',
-              measure1: 'test'
-            });
-            console.log(p)
-            ls.setCellValue(i, j, p)
+              console.log(part.partData)
 
 
+              console.log(String(parseTpl(cell_value, part.partData)).split("")[0])
+              var p = (parseTpl(cell_value, part.partData).split("")[0] == "$") ? "" : parseTpl(cell_value, part.partData);
+              console.log(p)
+              ls.setCellValue(i, j, p)
+
+
+            }
           }
         }
-      }
-    })
+      })
+    });
+
   }
 }
 
@@ -315,7 +316,6 @@ class DataInputTable extends HTMLElement{
                     console.log(data[key]);
                     var dataType = data[key].instance;
                     console.log(dataType)
-                    console.log(dataType['ref'])
                     var dataTypeKey = (typeof dataType === 'Array' && dataType !== null? dataType: "Select");
                     var feildName = data[key].path;
 
@@ -325,7 +325,8 @@ class DataInputTable extends HTMLElement{
                         Boolean:`<label class="container"><input id="${data[key].path}"type="checkbox"><span class="checkmark"></span></label>`,
                         Date: `<input id="${data[key].path}"type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`,
                         Array: `<dropdown-selector id="${data[key].path}" items="model" model="robotModel"></dropdown-selector>`,
-                        ObjectID: `<input id="${data[key].path}"type='text' disabled placeholder='ObjectId'/>`
+                        ObjectID: `<input id="${data[key].path}"type='text' disabled placeholder='ObjectId'/>`,
+                        Mixed: `<input id="${data[key].path}"type='text'  placeholder='Object'/>`
                     }
 
                     $("#data-table-table").append(`
@@ -418,9 +419,6 @@ function open_xlsx_sheet(uid, sheet, ppap){
 }
 
 function prepareTable(tableh, tableb, model){
-  console.log(model)
-
-
   var rowDataTypes = [];
   var rowFeildNames = [];
 
@@ -434,7 +432,6 @@ function prepareTable(tableh, tableb, model){
           var cell = t_row.insertCell(0)
           var collumnDataType = schema[i].instance;
           var collumnFeildName = schema[i].path
-          console.log(collumnFeildName)
           cell.innerHTML = `<b>${schema[i].path}</b>`
           rowDataTypes.push(collumnDataType)
           rowFeildNames.push(collumnFeildName);
@@ -455,10 +452,10 @@ function prepareTable(tableh, tableb, model){
           Number: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}" type='text' placeholder='Number'/>`,
           String: `<input id="${rowFeildNames[j]}${ri} " value="${docs[i][rowFeildNames[j]]}"type='text' placeholder='String'/>`,
           Boolean: `<input-checkbox ></input-checkbox>`,
-         // Boolean:`<label class="container"><input id="${rowFeildNames[j]}${ri}" ${checked} type="checkbox"><span class="checkmark"></span></label>`,
           Date: `<input id="${rowFeildNames[j]}${ri}" value="${dateval}"type="date" id="start" name="trip-start" value="2021-05-26" min="2018-01-01" max="2099-12-31">`,
           Array: `<dropdown-selector id="${rowFeildNames[j]}${ri}" items="model" model="moldModel"></dropdown-selector>`,
-          ObjectID: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type='text' disabled placeholder='ObjectId'/>`
+          ObjectID: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type='text' disabled placeholder='ObjectId'/>`,
+          Object: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type='text'  placeholder='Object'/>`
         }
           //make cell
 
