@@ -76,22 +76,12 @@ http.listen(80, () => {
 
 //app.listen(81)
 app.get('/xlsx/:ppap/:sheet_name', (req, res) => {
-
-
   var _ppap = req.param("ppap");
   var sheet_name = req.param('sheet_name')
-  var wb = XLSX.readFile(`${__dirname}/public/excel/${_ppap}/${sheet_name}`);
-  //var obj = xlsx.parse(`${__dirname}/public/excel/${_ppap}/${sheet_name}`);
-  //console.log(obj)
   res.sendFile(`${__dirname}/public/excel/${_ppap}/${sheet_name}`)
-  //res.json(wb)
 })
 
-function convert_xlsx_for_web(wb) {
-  var out = [];
 
-  return out;
-}
 
 app.post("/db/:model/insert", (req, res) => {
   var model = req.param('model');

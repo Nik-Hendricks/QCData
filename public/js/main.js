@@ -1,3 +1,4 @@
+
 const sidebarItems = {
     home:{
         title: "Home",
@@ -22,12 +23,6 @@ const sidebarItems = {
         icon: 'fas fa-database',
         id:"data-item",
         onclick: "dataView()",
-    },
-    createForm:{
-        title: "Create Form",
-        icon: "fas fa-file",
-        id: "createForm-item",
-        onclick: "createFormView()"
     },
     blueBook:{
         title: "Blue Book",
@@ -213,19 +208,6 @@ function open_db_document(model){
         //document.getElementById("data-view-table").setAttribute('data', JSON.stringify(documentData.data))
         document.getElementById("data-view-table").setAttribute('model', model)
     });
-    //fetch('http://104.236.0.12/db/document/' + model)
-    //.then(response => response.json())
-    //.then((data) => {
-    //    var documentData = data;
-
-    //    $.get( "/view/dataView.html", ( data ) => {
-    //        clearMainContentContainer()
-    //        $("#main-content-container").append(data);
-    //        document.getElementById("data-view-table").setAttribute('data', JSON.stringify(documentData.data))
-    //    });
- 
-
-    //})
 }
 
 
@@ -273,13 +255,6 @@ function dataView(){
         clearMainContentContainer()
         $("#main-content-container").append(data);
     });
-}
-
-function createFormView(){
-    $.get("/view/createForm.html", (data) => {
-        clearMainContentContainer();
-        $("#main-content-container").append(data);
-    })
 }
 
 function blueBookView(){
@@ -374,7 +349,33 @@ const sheet_map = {
   }
 }
 
-function getXLSX(product_uid, sheet, ppap){
+function prepareLuckyChart(sheet, ppap){
+    return new Promise(resolve => {
+        getXLSX(sheet, ppap).then(data => {
+          //Configuration item
+        LuckyExcel.transformExcelToLucky(data, function(exportJson, luckysheetfile){
+                luckysheet.destroy();
+                var ls = luckysheet.create({
+                  container: 'luckysheet', // luckysheet is the container id
+                  data:exportJson.sheets,
+                  title:exportJson.info.name,
+                  allowEdit: true,
+                  forceCalculation: false,
+                  	hook:{
+		                workbookCreateAfter:function(){
+	                		resolve(luckysheet)
+	                	}
+	                }
+                })
+        })
+
+          
+        })
+    })
+}
+
+
+function getXLSX(sheet, ppap){
     var sheet_name = sheet_map[ppap][sheet].filename
     console.log(sheet_name)
     return new Promise(resolve => {

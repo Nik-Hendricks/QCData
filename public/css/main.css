@@ -805,3 +805,35 @@ spreadsheet-view{
   border-radius: 10px !important;
 }
   
+.luckysheet-container{
+  position:relative;
+  top:10px;
+  left:10px;
+  height: 800px;
+
+}
+
+dl{
+  margin-top:150px;
+  position:relative;
+  left:-150px;
+  margin-left:50%;
+  width:300px;
+  color: white;
+  font-size:20px;
+  padding:5px;
+
+  border-radius:10px;
+  background-color: #232528;
+}
+
+
+
+dl>dt>dd{
+  color:white;
+  padding:10px;
+  margin:10px;
+  border-radius:10px;
+  background-color: #5f85db;
+  cursor: pointer;
+}

@@ -33,3 +33,5 @@
             - create new file following the template stored in mongodb
         - if has_data = true
             -  populate the data into the webapp
+
+--add all values to be populated in datasheet to an array so we can track the data.

@@ -1,3 +1,5 @@
+
+
 class InputCheckbox extends HTMLElement{
   constructor(){
     super();
@@ -6,16 +8,12 @@ class InputCheckbox extends HTMLElement{
   
   connectedCallback(){
     var scope = this;
-      console.log(this.checked)
+    console.log(this.checked)
       //this.checked = (this.hasAttribute('checked')) ? false : true;
-      this.onclick = () => {
-
+    this.onclick = () => {
       $("input").prop("checked",$(this).prop("checked"));
-
-        
     }
   }
-
 }
 
 class XSpreadsheet extends HTMLElement{
@@ -24,54 +22,39 @@ class XSpreadsheet extends HTMLElement{
     this.product_UID = this.getAttribute("product_UID");
     this.sheet = this.getAttribute("sheet");
     this.ppap = this.getAttribute("ppap");
-    this.innerHTML = '<div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;"></div>'
+    this.innerHTML = '<div class="luckysheet-container"><div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;"></div></div>'
   }
 
   connectedCallback(){
+    prepareLuckyChart(this.sheet, this.ppap).then(ls => {
+      console.log(ls)
+      var data_parse_range = 50;
+      for(var i = 0; i < data_parse_range; i++){
+        for(var j = 0; j < data_parse_range; j++){
+
+          var cell_value = String(ls.getCellValue(i, j));
+          if(cell_value != 'null'){
 
 
-    
-    getXLSX(null, this.sheet, this.ppap).then(data => {
-      console.log(data)
-      
-           //Configuration item
-        LuckyExcel.transformExcelToLucky(data, function(exportJson, luckysheetfile){
 
-            // After obtaining the converted table data, use luckysheet to initialize or update the existing luckysheet workbook
-            // Note: Luckysheet needs to introduce a dependency package and initialize the table container before it can be used
-            luckysheet.create({
-                container: 'luckysheet', // luckysheet is the container id
-                data:exportJson.sheets,
-                title:exportJson.info.name,
 
+            var p = parseTpl(cell_value, { 
+              name: 'John',
+              galaxy: 'Milky Way',
+              measure1: 'test'
             });
-        });
+            console.log(p)
+            ls.setCellValue(i, j, p)
 
+
+          }
+        }
+      }
     })
-
   }
 }
 
-function x_spreadsheet_format(wb){
-  const out = [];
-  for(var name in wb.Sheets){
- // wb.Sheets.forEach(name => {
-    const o = {name, rows:{}};
-    const ws = wb.Sheets[name];
-    const aoa = XLSX.utils.sheet_to_json(ws, {raw: false, header:1});
-    aoa.forEach((r, i) => {
-      const cells = {};
-      r.forEach((c, j) => {
-        cells[j] = { text: c }
-      });
-      o.rows[i] = {
-        cells
-      };
-    })
-    out.push(o);
-  };
-  return out;
-}
+
 
 
 class DropdownSelector extends HTMLElement{
@@ -249,22 +232,17 @@ class ItemView extends HTMLElement{
             this.items = doc;
           }).then(() => {
             this.items.forEach(item => {
-              var onclick = 'data[key].onclick';
+              var onclick = `show_xlsx_sheets('${item._id}')`;
               var icon = 'data[key].icon';
               var title = item.partName;
-              this.appendItem('', item.partName,'fas fa-file')
-
-              //this.loadData(this.items)
+              this.appendItem(onclick, item.partName,'fas fa-file')
             });
           })
         }else{
           var data = this.itemMap[this.getAttribute('item-set')];
           this.loadData(data)
         }
-
-
-
-        })
+      })
     }
 
   appendItem(onclick, title, icon){
@@ -277,24 +255,19 @@ class ItemView extends HTMLElement{
   }
 
   loadData(data){
-    
+    for(var key in data){
+      var onclick = data[key].onclick;
+      var icon = data[key].icon;
+      var title = data[key].title;
 
-          console.log(this.getAttribute('item-set'))
-          for(var key in data){
+      $(this).find("#item-view-body").append(`
+      <div class="item-view-item" onclick="${onclick}">
+        <i class="${icon}"></i>
+        <p>${title}</p>
+      </div>
+      `)
 
-            console.log(data[key])
-
-            var onclick = data[key].onclick;
-            var icon = data[key].icon;
-            var title = data[key].title;
-
-            $(this).find("#item-view-body").append(`
-            <div class="item-view-item" onclick="${onclick}">
-              <i class="${icon}"></i>
-              <p>${title}</p>
-            </div>
-            `)
-          }
+    }
   }
 
 }
@@ -414,6 +387,36 @@ function getHTML(file){
     })
 }
 
+function show_xlsx_sheets(uid){
+  console.log(uid)
+  setCookie('current_prod_uid', uid)
+  clearMainContentContainer();
+
+  console.log(sheet_map)
+
+  var html = `<div id="blue-book-xlsx-list-container"><dl></dl></div>`;
+
+  $('#main-content-container').append(html);
+
+  for(var key in sheet_map){
+    $('#blue-book-xlsx-list-container').find("dl").append(`<dt>${key}</dt>`)
+    for(var key2 in sheet_map[key]){
+      var ppap = key;
+      var sheet = key2;
+      var prod_uid = getCookie('current_prod_uid')
+      $('#blue-book-xlsx-list-container').find("dl").find("dt").append(`<dd onclick="open_xlsx_sheet('${uid}','${sheet}','${ppap}')">${key2}</dd>`)
+    }
+  }
+}
+
+function open_xlsx_sheet(uid, sheet, ppap){
+  clearMainContentContainer();
+  $("#main-content-container").append(`
+    <h1 class="title-h1">Blue Book</h1>
+    <spreadsheet-view product_UID="${uid}" sheet="${sheet}" ppap="${ppap}"></spreadsheet-view>`
+  )
+}
+
 function prepareTable(tableh, tableb, model){
   console.log(model)
 
@@ -441,10 +444,7 @@ function prepareTable(tableh, tableb, model){
         //make row
         var row = tableb.insertRow(-1);
         for(var j in rowDataTypes){
-        
-        //var checked = (docs[i][rowFeildNames[j]] == undefined? 'checked': docs[i][rowFeildNames[j]])
 
-       //console.log(checked)
 
         if(j == Date){
           var dateval = docs[i][rowFeildNames[j]]
@@ -473,27 +473,6 @@ function prepareTable(tableh, tableb, model){
 
     })
   })
-
-
-
-
-   // var table_columns = Object.size(data[0]);
-   // var table_rows = Object.size(data);
-   // var row = tableh.insertRow(-1)
-//
-   // for(var key in data[0]){
-   //     var cell = row.insertCell(0)
-   //     cell.innerHTML = `<b>${key}</b>`
-   // }
-   // for(var keyA in data){
-   //     var newRow = tableb.insertRow(-1)
-   //     for(var keyB in data[keyA]){
-   //         var record = data[keyA][keyB]
-   //         var newCell = newRow.insertCell(0)
-   //         newCell.innerHTML = record
-   //     }
-   // }
-
 }
 
 function setupSelect(){
@@ -580,6 +559,40 @@ function setupSelect(){
 
 
           
+}
+
+function setCookie(cname, cvalue, exdays) {
+  var d = new Date();
+  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+  var expires = "expires="+d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var ca = document.cookie.split(';');
+  for(var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+function checkCookie() {
+  var user = getCookie("username");
+  if (user != "") {
+    alert("Welcome again " + user);
+  } else {
+    user = prompt("Please enter your name:", "");
+    if (user != "" && user != null) {
+      setCookie("username", user, 365);
+    }
+  }
 }
 
 Object.size = function(obj) {
