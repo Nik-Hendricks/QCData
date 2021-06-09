@@ -35,3 +35,13 @@
             -  populate the data into the webapp
 
 --add all values to be populated in datasheet to an array so we can track the data.
+
+6-9-21 @done
+
+--need to create some uititlities
+    --easier way to update excel sheets
+    --html element for editing and displaying json data
+
+        --internal method for saving file and returning the raw JSON
+    
+    --

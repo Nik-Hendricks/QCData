@@ -13,6 +13,7 @@ class ViewManager{
     navBack(){
         console.log(this.view_history_cursor)
         if(this.view_history_cursor > 0){
+            //delete this.view_history[this.view_history_cursor]
             this.view_history_cursor--
             this._display_history_from_cursor();
         }

@@ -227,8 +227,8 @@ $(document).ready(function(){
     VM.pushView("blue book", '<h1 class="title-h1">Blue Book</h1><item-view id="item-view" item-set="model" model="productModel"></item-view>');
     VM.pushView("data input", '<h1 class="title-h1">New Data</h1><data-table id="data-table" model="${model}"></data-table>', {model:'productModel'});
     VM.pushView("data view", '<data-view-table id="data-view-table" model="${model}"></data-view-table>', {model: 'robotModel'});
-    //VM.setView("home", {sheet_name: "Setup", _ppap: _ppap})
-    VM.setView("blue book")
+    VM.pushView("test view", '<json-editor></json-editor>')
+    VM.setView("test view")
     
     //var pm = new ProductManager();
     PM._pushProduct(new ProductItem('60c0127066c3796afdd252cb'))
