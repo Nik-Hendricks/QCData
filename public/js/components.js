@@ -1,8 +1,3 @@
-
-
-
-
-
 class InputCheckbox extends HTMLElement{
   constructor(){
     super();
@@ -11,7 +6,7 @@ class InputCheckbox extends HTMLElement{
   
   connectedCallback(){
     var scope = this;
-    console.log(this.checked)
+
       //this.checked = (this.hasAttribute('checked')) ? false : true;
     this.onclick = () => {
       $("input").prop("checked",$(this).prop("checked"));
@@ -19,42 +14,7 @@ class InputCheckbox extends HTMLElement{
   }
 }
 
-class XSpreadsheet extends HTMLElement{
-  constructor(){
-    super();
-    this.product_UID = this.getAttribute("product_UID");
-    this.sheet = this.getAttribute("sheet");
-    this.ppap = this.getAttribute("ppap");
-    this.innerHTML = '<div class="luckysheet-container"><div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;"></div></div>'
-    this.dataValues = []
-  }
 
-  connectedCallback(){
-    get_row_by_id('productModel', this.product_UID).then(part => {
-      prepareLuckyChart(this.sheet, this.ppap).then(ls => {
-        var data_parse_range = 50;
-
-        for(var x = 0; x < ls.getAllSheets().length; x++){
-          ls.setSheetActive(x);
-          for(var i = 0; i < data_parse_range; i++){
-            for(var j = 0; j < data_parse_range; j++){
-              var cell_value = String(ls.getCellValue(i, j));
-              var first_char = cell_value.split("")[0];
-              if(cell_value != 'null' && first_char == "$"){
-                var p = parseTpl(cell_value, part.productData);
-                this.dataValues.push({sheet:x, x: j, y: i, value: p})
-                ls.setCellValue(i, j, p)
-              }
-            }
-          }
-        }
-        ls.setSheetActive(0)
-        console.log(this.dataValues)
-      })
-    });
-  }
-
-}
 
 
 
@@ -74,12 +34,11 @@ class DropdownSelector extends HTMLElement{
       //if items attribute = model and has attribute model
       if(this.getAttribute('items') == 'model' && this.hasAttribute('model')){
         //get document from database 
-        getDocument(this.getAttribute('model')).then(doc => {
+        API.getDocument(this.getAttribute('model')).then(doc => {
           this.items = doc;
         })
 
       }else{
-        console.log(this.getAttribute('items'))
         this.items = JSON.parse(this.getAttribute('items'))
       }
 
@@ -161,7 +120,7 @@ class DropdownView extends HTMLElement{
 
   connectedCallback(){
     console.log(this.getAttribute('html'))
-    getView(this.getAttribute('html')).then((data) => {
+    API.getView(this.getAttribute('html')).then((data) => {
       console.log(data)
       this.innerHTML = data;
 
@@ -190,10 +149,8 @@ class Sidebar extends HTMLElement{
       </div>
     </div>`
 
-    console.log(sidebarItems)
     for (var key of Object.keys(sidebarItems)) {
       var item = sidebarItems[key];
-      console.log(sidebarItems[key].title)
       $("#sidebar-items-container").append(`<div id="${item.id}" onclick="${item.onclick}" class="sidebar-item"><i class="${item.icon}"></i><p>${item.title}</p></div>`)
     }
   }
@@ -204,96 +161,30 @@ class Sidebar extends HTMLElement{
 class DataFormControl extends HTMLElement{
     constructor(){
         super();
-        getHTML('dataFormControl.html').then(html => {
+        API.getHTML('dataFormControl.html').then(html => {
             this.innerHTML = html
         }).then(() => {
             this.dataForm = this.getAttribute('form')
-            console.log(this.dataForm)
-            getForm(this.dataForm).then(form => {
+            API.getForm(this.dataForm).then(form => {
                 $("#data-form-control-body").append(form)
             })
         })
     }
 }
 
-class ItemView extends HTMLElement{
-    constructor(){
-        super();
-        var scope = this;
-        this.itemMap = {dataViewItems, dataInputItems, newFormItems, blueBookItems1, blueBookPreProductionItems, blueBookPostProductionItems, blueBookInProductionItems}
 
-        getHTML('itemView.html').then(html => {
-            this.innerHTML = html;
-        }).then(() => {
-
-
-        if(this.getAttribute('item-set') == 'model' && this.hasAttribute('model')){
-          console.log(this.getAttribute('model'))
-          getDocument(this.getAttribute('model')).then(doc => {
-            console.log(doc)
-            this.items = doc;
-          }).then(() => {
-            this.items.forEach(item => {
-              var onclick = `show_xlsx_sheets('${item._id}')`;
-              var icon = 'data[key].icon';
-              var title = item.name;
-              this.appendItem(onclick, title,'fas fa-file')
-            });
-          })
-        }else{
-          var data = this.itemMap[this.getAttribute('item-set')];
-          this.loadData(data)
-        }
-      })
-    }
-
-  appendItem(onclick, title, icon){
-    $(this).find("#item-view-body").append(`
-      <div class="item-view-item" onclick="${onclick}">
-        <i class="${icon}"></i>
-        <p>${title}</p>
-      </div>
-    `)
-  }
-
-  loadData(data){
-    for(var key in data){
-      var onclick = data[key].onclick;
-      var icon = data[key].icon;
-      var title = data[key].title;
-
-      $(this).find("#item-view-body").append(`
-      <div class="item-view-item" onclick="${onclick}">
-        <i class="${icon}"></i>
-        <p>${title}</p>
-      </div>
-      `)
-
-    }
-  }
-
-}
 
 class DataViewTable extends HTMLElement{
   constructor(){
     super();
-
-    getHTML("dataViewTable.html").then(html => {
+    API.getHTML("dataViewTable.html").then(html => {
       this.innerHTML = html;
     }).then(() => {
       this.model = this.getAttribute('model');
-
-      console.log(this.model)
-
       var tableh = document.getElementById("data-view-table-thead");
       var tableb = document.getElementById("data-view-table-tbody");
       prepareTable(tableh, tableb, this.model);
-
-
-
-
     })
-
   }
 }
 
@@ -301,7 +192,7 @@ class DataInputTable extends HTMLElement{
     constructor(){
         super();
         
-        getHTML('dataInputTable.html').then(html => {
+        API.getHTML('dataInputTable.html').then(html => {
             this.innerHTML = html
         }).then(() => {
             this.model = this.getAttribute('model');
@@ -310,13 +201,9 @@ class DataInputTable extends HTMLElement{
             fetch('http://104.236.0.12/modelFeilds/' + this.model)
             .then(response => response.json())
             .then((data) => {
-                console.log(data[1])
-            
 
                 for(var key in data){
-                    console.log(data[key]);
                     var dataType = data[key].instance;
-                    console.log(dataType)
                     var dataTypeKey = (typeof dataType === 'Array' && dataType !== null? dataType: "Select");
                     var feildName = data[key].path;
 
@@ -347,14 +234,9 @@ class DataInputTable extends HTMLElement{
                   var vb = (va == 0 ? undefined : va)
                   var vc = (vb == 'on'? undefined : vb);
                   recordData[key] = vc
-                  console.log(vc)
                 }
-                fetch(`http://104.236.0.12/db/${this.model}/insert`, {
-                    method: 'POST',
-                    body: JSON.stringify({"data": recordData}),
-                    headers: {'Content-Type': 'application/json'}
-                }).then(res => res.json())
-                  .then(json => console.log(json));
+                console.log(PM._create_new_product)
+                PM._create_new_product(recordData)
               });
             })
 
@@ -365,34 +247,12 @@ class DataInputTable extends HTMLElement{
 
 
 
-function getForm(form){
-    return new Promise(resolve => {
-        $.get(`/form/${form}`, (data) => {
-            resolve(data)
-        })
-    })
-}
 
-function getView(file){
-  return new Promise(resolve => {
-    $.get(`/view/${file}`, (data) => {
-      resolve(data);
-    })
-  })
-}
-
-function getHTML(file){
-    return new Promise(resolve =>{
-        $.get( `/component/${file}`, function( data ) {
-            resolve(data)
-        });
-    })
-}
 
 function show_xlsx_sheets(uid){
   console.log(uid)
   setCookie('current_prod_uid', uid)
-  clearMainContentContainer();
+  VM.clearMainContentContainer();
 
   console.log(sheet_map)
 
@@ -412,21 +272,15 @@ function show_xlsx_sheets(uid){
 }
 
 function open_xlsx_sheet(uid, sheet, ppap){
-  clearMainContentContainer();
-  $("#main-content-container").append(`
-    <h1 class="title-h1">Blue Book</h1>
-    <spreadsheet-view product_UID="${uid}" sheet="${sheet}" ppap="${ppap}"></spreadsheet-view>`
-  )
+  VM.setView("spreadsheet", {sheet_name: sheet, _ppap:ppap})
 }
 
 function prepareTable(tableh, tableb, model){
   var rowDataTypes = [];
   var rowFeildNames = [];
 
-
-
-  getSchema(model).then(schema => {
-    getDocument(model).then(docs => {
+  API.getSchema(model).then(schema => {
+    API.getDocument(model).then(docs => {
       var t_row = tableh.insertRow(-1);
 
       for(var i in schema){
@@ -437,12 +291,12 @@ function prepareTable(tableh, tableb, model){
           rowDataTypes.push(collumnDataType)
           rowFeildNames.push(collumnFeildName);
       }
+
       var ri = 0;
       for(var i in docs){
         //make row
         var row = tableb.insertRow(-1);
         for(var j in rowDataTypes){
-
 
         if(j == Date){
           var dateval = docs[i][rowFeildNames[j]]
@@ -459,16 +313,11 @@ function prepareTable(tableh, tableb, model){
           Object: `<input id="${rowFeildNames[j]}${ri}" value="${docs[i][rowFeildNames[j]]}"type='text'  placeholder='Object'/>`
         }
           //make cell
-
-
           var cell = row.insertCell(0)
           cell.innerHTML = dataTypeInputs[rowDataTypes[j]]
         }
         ri++
-
-
       }
-
     })
   })
 }
@@ -553,61 +402,13 @@ function setupSelect(){
   
   /* If the user clicks anywhere outside the select box,
   then close all select boxes: */
-  document.addEventListener("click", closeAllSelect);
-
-
-          
+  document.addEventListener("click", closeAllSelect);    
 }
 
-function setCookie(cname, cvalue, exdays) {
-  var d = new Date();
-  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-  var expires = "expires="+d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-
-function getCookie(cname) {
-  var name = cname + "=";
-  var ca = document.cookie.split(';');
-  for(var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-
-function checkCookie() {
-  var user = getCookie("username");
-  if (user != "") {
-    alert("Welcome again " + user);
-  } else {
-    user = prompt("Please enter your name:", "");
-    if (user != "" && user != null) {
-      setCookie("username", user, 365);
-    }
-  }
-}
-
-Object.size = function(obj) {
-  var size = 0,
-    key;
-  for (key in obj) {
-    if (obj.hasOwnProperty(key)) size++;
-  }
-  return size;
-};
-
-window.customElements.define('spreadsheet-view', XSpreadsheet)
 window.customElements.define('dropdown-selector', DropdownSelector);
 window.customElements.define("dropdown-view", DropdownView);
 window.customElements.define('custom-sidebar', Sidebar);
 window.customElements.define('input-checkbox', InputCheckbox)
 window.customElements.define('data-view-table', DataViewTable);
-window.customElements.define("item-view", ItemView);
 window.customElements.define("data-table", DataInputTable)
 window.customElements.define("data-form-control", DataFormControl);

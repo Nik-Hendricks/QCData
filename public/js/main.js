@@ -1,34 +1,40 @@
+const API = new _API('104.236.0.12')
+const PM = new ProductManager();
+const VM = new ViewManager($("#main-content-container"));
+
+
+
 
 const sidebarItems = {
     home:{
         title: "Home",
         icon: 'fas fa-home',
         id: 'home-item',
-        onclick: "homeView()"
+        onclick: "VM.setView('home')"
     },
     overview:{
         title: "Overview",
         icon: "fas fa-eye",
         id: "overview-item",
-        onclick: "overviewView()"
+        onclick: "VM.setView('overview')"
     },
     forms:{
         title: "Forms",
         icon: 'fas fa-file-alt',
         id:"forms-item",
-        onclick:"formsView()"
+        onclick: "VM.setView('forms')"
     },
     data:{
         title: "Data",
         icon: 'fas fa-database',
         id:"data-item",
-        onclick: "dataView()",
+        onclick: "VM.setView('data')"
     },
     blueBook:{
         title: "Blue Book",
         icon: "fas fa-file",
         id: "createForm-item",
-        onclick: "blueBookView()"
+        onclick: "VM.setView('blue book')"
     }
 }
 
@@ -130,40 +136,40 @@ var dataInputItems = {
         title: "New Robot",
         icon: 'fas fa-robot',
         id:"data-view-item",
-        onclick: "dataInputTableView('robotModel')",
+        onclick: "VM.setView('data view', {model: 'robotModel'})",
     },
 
     products:{
         title: "New Product",
         icon: 'fas fa-plus-square',
         id:"data-view-item",
-        onclick: "dataInputTableView('productModel')",
+        onclick: "VM.setView('data input',{model:'productModel'})",
     },
 
     productData:{
         title: "New Product Data",
         icon: 'fas fa-plus-square',
         id:"data-view-item",
-        onclick: "dataInputTableView('productDataModel')",
+        onclick: "VM.setView('data input',{model:'productDataModel'})",
     },
 
     clients:{
         title: "New Client",
         icon: 'fas fa-handshake',
         id:"data-view-item",
-        onclick: "dataInputTableView('clientModel')",
+        onclick: "VM.setView('data input',{model:'clientModel'})",
     },
     setups:{
         title: "New Setup",
         icon: 'fas fa-wrench',
         id:"data-view-item",
-        onclick: "dataInputTableView('setupModel')",
+        onclick: "VM.setView('data input',{model:'setupModel'})",
     },
     molds:{
         title: "New Mold",
         icon: 'fas fa-cubes',
         id:"data-view-item",
-        onclick: "dataInputTableView('moldModel')",
+        onclick: "VM.setView('data input',  {model:'moldModel'})",
     },
 }
 
@@ -172,166 +178,63 @@ var dataViewItems = {
         title: "Robots",
         icon: 'fas fa-robot',
         id:"data-view-item",
-        onclick: "open_db_document('robotModel')",
+        onclick: "VM.setView('data view', {model: 'robotModel'})",
     },
 
     products:{
         title: "Products",
         icon: 'fas fa-plus-square',
         id:"data-view-item",
-        onclick: "open_db_document('productModel')",
+        onclick: "VM.setView('data view', {model: 'productModel'})",
     },
 
     productData:{
         title: "Product Data",
         icon: 'fas fa-plus-square',
         id:"data-view-item",
-        onclick: "open_db_document('productDataModel')",
+        onclick: "VM.setView('data view', {model: 'productDataModel'})",
     },
 
     clients:{
         title: "Clients",
         icon: 'fas fa-handshake',
         id:"data-view-item",
-        onclick: "open_db_document('clientModel')",
+        onclick: "VM.setView('data view', {model: 'clientModel'})",
     },
     setups:{
         title: "Setups",
         icon: 'fas fa-wrench',
         id:"data-view-item",
-        onclick: "open_db_document('setupModel')",
+        onclick: "VM.setView('data view', {model: 'setupModel'})",
     },
     molds:{
         title: "Molds",
         icon: 'fas fa-cubes',
         id:"data-view-item",
-        onclick: "open_db_document('moldModel')",
+        onclick: "VM.setView('data view', {model: 'moldModel'})",
     },
 }
 
 
 $(document).ready(function(){
-    //
+    var _ppap = "PreProduction";
+    var sheet_name = "QCDocumentation";
+    VM.pushView('spreadsheet','<h1 class="title-h1">Home</h1><spreadsheet-view product_UID="" sheet="${sheet_name}" ppap="${_ppap}"></spreadsheet-view>',{sheet_name: sheet_name, _ppap: _ppap})
+    VM.pushView('home','<h1 class="title-h1">Home</h1><spreadsheet-view product_UID="" sheet="${sheet_name}" ppap="${_ppap}"></spreadsheet-view>',{sheet_name: sheet_name, _ppap: _ppap})
+    VM.pushView('overview','<item-view id="item-view" item-set="dataInputItems"></item-view><item-view id="item-view" item-set="dataViewItems"></item-view>')
+    VM.pushView("forms",'<h1 class="title-h1">Forms</h1><item-view id="item-view" item-set="dataInputItems"></item-view>' );
+    VM.pushView("data", '<h1 class="title-h1">Data</h1><item-view item-set="dataViewItems" ></item-view>');
+    VM.pushView("blue book", '<h1 class="title-h1">Blue Book</h1><item-view id="item-view" item-set="model" model="productModel"></item-view>');
+    VM.pushView("data input", '<h1 class="title-h1">New Data</h1><data-table id="data-table" model="${model}"></data-table>', {model:'productModel'});
+    VM.pushView("data view", '<data-view-table id="data-view-table" model="${model}"></data-view-table>', {model: 'robotModel'});
+    //VM.setView("home", {sheet_name: "Setup", _ppap: _ppap})
+    VM.setView("data input")
+    
+    //var pm = new ProductManager();
+    PM._pushProduct(new ProductItem('60c0127066c3796afdd252cb'))
+    console.log(API)
 })
 
-function open_db_document(model){
-    console.log(model)
-    $.get( "/view/dataView.html", ( data ) => {
-        clearMainContentContainer()
-        $("#main-content-container").append(data);
-        //document.getElementById("data-view-table").setAttribute('data', JSON.stringify(documentData.data))
-        document.getElementById("data-view-table").setAttribute('model', model)
-    });
-}
-
-
-
-
-function homeView(){
-        clearMainContentContainer()
-
-        var _ppap = "PreProduction";
-        var sheet_name = "Setup";
-
-        $("#main-content-container").append(`
-            <h1 class="title-h1">Home</h1>
-            <spreadsheet-view product_UID="" sheet="QCDocumentation" ppap="PreProduction"></spreadsheet-view>
-        `);
-}
-
-function formsView(){
-    $.get( "/view/forms.html", function( data ) {
-        clearMainContentContainer()
-        $("#main-content-container").append(data);
-    });
-}
-
-function dataInputTableView(model){
-    $.get("/view/dataFormView.html", (data) => {
-        clearMainContentContainer();
-        $("#main-content-container").append(data);
-    }).then(() => {
-        document.getElementById("data-table").setAttribute("model", model)
-    })
-}
-
-function dataFormView(form){
-    $.get( "/view/dataFormView.html", function( data ) {
-        clearMainContentContainer()
-        $("#main-content-container").append(data);
-    }).then(() => {
-        document.getElementById("data-form-control").setAttribute("form", form)
-    });
-}
-
-function dataView(){
-    $.get( "/view/data.html", function( data ) {
-        clearMainContentContainer()
-        $("#main-content-container").append(data);
-    });
-}
-
-function blueBookView(){
-    $.get("/view/bluebook.html", (data) => {
-        clearMainContentContainer();
-        $("#main-content-container").append(data);
-    })
-}
-
-function blueBookInProductionView(){
-    $.get("/view/bluebook_in_production_view.html", (data) => {
-        clearMainContentContainer();
-        $("#main-content-container").append(data);
-    })
-}
-
-function blueBookPostProductionView(){
-    $.get("/view/bluebook_post_production_view.html", (data) => {
-        clearMainContentContainer();
-        $("#main-content-container").append(data);
-    })
-}
-
-function blueBookPreProductionView(){
-    $.get("/view/bluebook_pre_production_view.html", (data) => {
-        clearMainContentContainer();
-        $("#main-content-container").append(data);
-    })
-}
-
-function overviewView(){
-    $.get("/view/overviewView.html", (data) => {
-        clearMainContentContainer();
-        $("#main-content-container").append(data);
-    })
-}
-
-function clearMainContentContainer(){
-    $('#main-content-container').empty();
-}
-
-
-
-
-function getSchema(model){
-  return new Promise(resolve => {
-    fetch('http://104.236.0.12/modelFeilds/' + model)
-      .then(response => response.json())
-      .then((data) => {
-        resolve(data)
-      })
-  })
-}
-
-function getDocument(model){
-    return new Promise(resolve => {
-    fetch('http://104.236.0.12/db/document/' + model)
-      .then(response => response.json())
-      .then((data) => {
-        resolve(data.data)
-      })
-    })
-}
 
 const sheet_map = {
   "PreProduction":{
@@ -361,51 +264,4 @@ const sheet_map = {
       filename: "Production Documentation.xlsx"
     },
   }
-}
-
-function prepareLuckyChart(sheet, ppap){
-    return new Promise(resolve => {
-        getXLSX(sheet, ppap).then(data => {
-          //Configuration item
-        LuckyExcel.transformExcelToLucky(data, function(exportJson, luckysheetfile){
-                luckysheet.destroy();
-                var ls = luckysheet.create({
-                  container: 'luckysheet', // luckysheet is the container id
-                  data:exportJson.sheets,
-                  title:exportJson.info.name,
-                  allowEdit: true,
-                  forceCalculation: false,
-                  	hook:{
-		                workbookCreateAfter:function(){
-	                		resolve(luckysheet)
-	                	}
-	                }
-                })
-        })
-
-          
-        })
-    })
-}
-
-function get_row_by_id(db, id){
-    return new Promise(resolve => {
-        fetch(`http://104.236.0.12/get_row_by_id/${db}/${id}`, {
-            method: 'GET',
-        }).then(res => res.json())
-        .then(json => resolve(json));
-    })
-}
-
-function getXLSX(sheet, ppap){
-    var sheet_name = sheet_map[ppap][sheet].filename
-    console.log(sheet_name)
-    return new Promise(resolve => {
-    fetch(`http://104.236.0.12/xlsx/${ppap}/${sheet_name}`)
-      .then(response => response.arrayBuffer())
-      .then((data) => {
-        resolve(data)
-      })
-    })
-    
 }

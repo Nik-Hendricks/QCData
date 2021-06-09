@@ -827,7 +827,9 @@ dl{
   background-color: #232528;
 }
 
-
+dl>dt{
+  padding:10px;
+}
 
 dl>dt>dd{
   color:white;

@@ -93,9 +93,18 @@ app.get('/xlsx/:ppap/:sheet_name', (req, res) => {
 
 app.post("/db/:model/insert", (req, res) => {
   var model = req.param('model');
+  console.log(model)
   var model = new modelMap[model](req.body.data)
-  model.save();
-  res.json({"data": "success"})
+  
+  model.save((err, doc) => {
+    var _json;
+    if(err){
+      res.json({"error": err})
+    }else{
+      res.json({"uid": doc._id})
+    }
+  });
+
 })
 
 app.get(`/db/schema/:schema`, (req, res) => {
