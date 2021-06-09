@@ -221,14 +221,14 @@ $(document).ready(function(){
     var sheet_name = "QCDocumentation";
     VM.pushView('spreadsheet','<h1 class="title-h1">Home</h1><spreadsheet-view product_UID="" sheet="${sheet_name}" ppap="${_ppap}"></spreadsheet-view>',{sheet_name: sheet_name, _ppap: _ppap})
     VM.pushView('home','<h1 class="title-h1">Home</h1><spreadsheet-view product_UID="" sheet="${sheet_name}" ppap="${_ppap}"></spreadsheet-view>',{sheet_name: sheet_name, _ppap: _ppap})
-    VM.pushView('overview','<item-view id="item-view" item-set="dataInputItems"></item-view><item-view id="item-view" item-set="dataViewItems"></item-view>')
+    VM.pushView('overview','<h1 class="title-h1">Overview</h1><item-view id="item-view" item-set="dataInputItems"></item-view><item-view id="item-view" item-set="dataViewItems"></item-view>')
     VM.pushView("forms",'<h1 class="title-h1">Forms</h1><item-view id="item-view" item-set="dataInputItems"></item-view>' );
     VM.pushView("data", '<h1 class="title-h1">Data</h1><item-view item-set="dataViewItems" ></item-view>');
     VM.pushView("blue book", '<h1 class="title-h1">Blue Book</h1><item-view id="item-view" item-set="model" model="productModel"></item-view>');
     VM.pushView("data input", '<h1 class="title-h1">New Data</h1><data-table id="data-table" model="${model}"></data-table>', {model:'productModel'});
     VM.pushView("data view", '<data-view-table id="data-view-table" model="${model}"></data-view-table>', {model: 'robotModel'});
     //VM.setView("home", {sheet_name: "Setup", _ppap: _ppap})
-    VM.setView("data input")
+    VM.setView("blue book")
     
     //var pm = new ProductManager();
     PM._pushProduct(new ProductItem('60c0127066c3796afdd252cb'))
