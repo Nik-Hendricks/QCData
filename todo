@@ -56,3 +56,9 @@
 
         --child elements / inputs
             --these elements need to keep track of the data relative to the json object
+
+--create partdata 
+    --return _id
+        --now create product and put product data _id into it
+            -- return product _id
+                --update product where _id == returned _id
