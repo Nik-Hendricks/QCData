@@ -5,11 +5,11 @@ class _API{
 
     getSchema(model){
       return new Promise(resolve => {
-        fetch(`http://${this.ip}/modelFeilds/` + model)
-          .then(response => response.json())
-          .then((data) => {
-            resolve(data)
-          })
+      fetch(`http://${this.ip}/modelFeilds/` + model)
+        .then(response => response.json())
+        .then((data) => {
+          resolve(data)
+        })
       })
     }
 
@@ -84,6 +84,13 @@ class _API{
       getDocument("productModel").then(doc => {
         resolve(doc);
       })
+    })
+  }
+
+
+  postProductData(){
+    return new Promise(resolve => {
+
     })
   }
 

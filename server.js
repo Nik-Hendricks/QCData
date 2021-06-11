@@ -72,6 +72,43 @@ app.use(express.json());
 http.listen(80, () => {
   console.log("listening on 80")
 })
+
+app.post('/db/product/data/:product_uid',(req, res) => {
+  var product_uid = req.param('product_uid');
+  console.log(req.body)
+  var model = modelMap['productDataModel']
+  //get proddata id from product
+  getProdDataIdFromProduct(product_uid).then(prod_data_uid => {
+
+    model.replaceOne({ _id:  prod_data_uid}, req.body, (err, doc) => {
+      if(err){
+        console.log(err)
+        res.json({"error": err})
+      }else{
+        res.json({"uid": doc._id})
+      }
+    })
+
+  })
+})
+
+function getProdDataIdFromProduct(prod_id){
+  return new Promise(resolve => {
+    getRowByID(modelMap["productModel"], prod_id).then(res => {
+      resolve(res.productData._id)
+    })
+  })
+}
+
+app.get('/db/product/data/:product_uid', (req, res) => {
+  var product_uid = req.param('product_uid');
+  getRowByID(modelMap['productModel'], product_uid).then(resd => {
+    console.log(resd.productData)
+    res.json(resd.productData)
+  })
+})
+
+
  
 app.get('/get_row_by_id/:db/:id', (req, res) => {
   var db = req.param('db');

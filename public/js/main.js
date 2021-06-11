@@ -227,7 +227,7 @@ $(document).ready(function(){
     VM.pushView("blue book", '<h1 class="title-h1">Blue Book</h1><item-view id="item-view" item-set="model" model="productModel"></item-view>');
     VM.pushView("data input", '<h1 class="title-h1">New Data</h1><data-table id="data-table" model="${model}"></data-table>', {model:'productModel'});
     VM.pushView("data view", '<data-view-table id="data-view-table" model="${model}"></data-view-table>', {model: 'robotModel'});
-    VM.pushView("test view", '<json-editor></json-editor>')
+    VM.pushView("test view", '<json-editor load-url="http://104.236.0.12/db/product/data/${product_uid}"></json-editor>', {product_uid: getCookie('current_prod_uid')})
     VM.setView("test view")
     
     //var pm = new ProductManager();

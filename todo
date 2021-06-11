@@ -3,8 +3,9 @@
     - utilize PPAP procedure also bluebook ?
 
 -TODO
-    -Implement custom component for handling exel data.
-    -Implement ui and view paths effective for blue book and data navigation
+    -Implement custom component for handling exel data. @done
+    -Implement ui and view paths effective for blue book and data navigation @doneish
+    -
 
 
 -Excel Bridge
@@ -44,4 +45,14 @@
 
         --internal method for saving file and returning the raw JSON
     
-    --
+- JsonView
+    --there is only one key for one data
+        --therfore i can make a nice fleshed out ui for the { key : data } edit
+        --then make a tab element that has customizable width
+        --parse the object and place the elements
+
+        --known rules
+            --tabcount should be incremented on each depth crawl
+
+        --child elements / inputs
+            --these elements need to keep track of the data relative to the json object
