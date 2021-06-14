@@ -47,10 +47,6 @@ const sheet_map = {
 }
 
 
-//var _ppap = "PreProduction";
-//var sheet_name = sheet_map[_ppap]["Setup"].filename
-
-//console.log(xlsx.parse(`${__dirname}/public/excel/${_ppap}/${sheet_name}`))
 
 const modelMap = {
   "robotModel": robotModel,
@@ -75,16 +71,18 @@ http.listen(80, () => {
 
 app.post('/db/product/data/:product_uid',(req, res) => {
   var product_uid = req.param('product_uid');
-  console.log(req.body)
   var model = modelMap['productDataModel']
+  console.log(req.body)
   //get proddata id from product
   getProdDataIdFromProduct(product_uid).then(prod_data_uid => {
 
-    model.replaceOne({ _id:  prod_data_uid}, req.body, (err, doc) => {
+    model.update({ _id:  prod_data_uid}, req.body,{upsert: true}, (err, doc) => {
       if(err){
         console.log(err)
         res.json({"error": err})
       }else{
+        console.log('we good')
+        console.log(doc)
         res.json({"uid": doc._id})
       }
     })
@@ -109,19 +107,6 @@ app.get('/db/product/data/:product_uid', (req, res) => {
 })
 
 
- 
-app.get('/get_row_by_id/:db/:id', (req, res) => {
-  var db = req.param('db');
-  var id = req.param('id');
-  console.log(db)
-  if(modelMap[db]){
-    getRowByID(modelMap[db], id).then(resd => {
-      console.log(resd);
-      res.json(resd)
-    })
-  }
-})
-
 app.get('/xlsx/:ppap/:sheet_name', (req, res) => {
   var _ppap = req.param("ppap");
   var sheet_name = req.param('sheet_name')
@@ -140,21 +125,19 @@ app.post("/db/:model/insert", (req, res) => {
     }else{
       res.json({"uid": doc._id})
     }
-  });
-
+  }); 
 })
 
 app.get(`/db/schema/:schema`, (req, res) => {
   var schema = req.param('schema');
-  console.log(schema)
   var model = modelMap[schema].schema
 
   console.log(model)
   res.json(model)
 })
 
-app.get("/db/document/:model", (req, res) => {
-  var model = req.param('model');
+app.get("/db/:document/model", (req, res) => {
+  var model = req.param('document');
   var queryModel = modelMap[model];
   var sendDoc = []
 
@@ -169,6 +152,37 @@ app.get("/db/document/:model", (req, res) => {
 
 
 })
+
+app.get('/db/:document/row/:_id', (req, res) => {
+  var db = req.param('document');
+  var id = req.param('_id');
+  console.log(db)
+  if(modelMap[db]){
+    getRowByID(modelMap[db], id).then(resd => {
+      res.json(resd)
+    })
+  }else{
+    res.json({error: "db does not exist"})
+  }
+})
+
+app.post('/db/:document/:_id', (req, res) => {
+  var model = req.param('model');
+  console.log(req.body)
+  var model = new modelMap[model](req.body.data)
+
+  
+  model.save((err, doc) => {
+    var _json;
+    if(err){
+      res.json({"error": err})
+    }else{
+      res.json({"uid": doc._id})
+    }
+  });
+})
+
+
 
 app.get("/modelFeilds/:model", (req, res) => {
   var model = req.param('model');

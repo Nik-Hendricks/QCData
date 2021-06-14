@@ -15,7 +15,7 @@ class _API{
 
     getDocument(model){
         return new Promise(resolve => {
-        fetch(`http://${this.ip}/db/document/` + model)
+        fetch(`http://${this.ip}/db/${model}/model`)
           .then(response => response.json())
           .then((data) => {
             resolve(data.data)
@@ -25,12 +25,25 @@ class _API{
 
     getRowById(db, id){
         return new Promise(resolve => {
-            fetch(`http://${this.ip}/get_row_by_id/${db}/${id}`, {
+            fetch(`http://${this.ip}/db/${db}/row/${id}`, {
                 method: 'GET',
             }).then(res => res.json())
             .then(json => resolve(json));
         })        
     }
+
+    setRowByID(db, id, row){
+        return new Promise(resolve => {
+            fetch(`http://${this.ip}/db/${db}/${id}`, {
+                method: 'POST',
+                data: row,
+                headers: {'Content-Type': 'application/json'}
+            }).then(res => res.json())
+            .then(json => resolve(json));
+        })       
+    }
+
+
 
     insertDocument(model, data){
       return new Promise(resolve => {
@@ -79,14 +92,40 @@ class _API{
       })
   }
 
-  getProducts(){
-    return new Promise(resolve => {
-      getDocument("productModel").then(doc => {
-        resolve(doc);
-      })
+  getProductData(product_uid){
+    //http://104.236.0.12/db/product/data/${product_uid}
+    this.getRemoteJSON(`http://104.236.0.12/db/product/data/${product_uid}`).then(res => {
+      console.log(res)
     })
   }
 
+  setProductData(product_uid, data){
+    console.log(`product_uid is ${product_uid}`)
+    this.postRemoteJSON(`http://104.236.0.12/db/product/data/${product_uid}`, data).then(res => {
+      console.log(res)
+    })
+  }
+
+
+  getRemoteJSON(url){
+      return new Promise(resolve => {
+          fetch(url)
+          .then(response => response.json())
+          .then((data) => {
+              resolve(data)
+          })
+      })
+  }
+  postRemoteJSON(url, data){
+      return new Promise(resolve => {
+          fetch(url, {
+              method: 'POST',
+              body: data,
+              headers: {'Content-Type': 'application/json'}
+          }).then(res => res.json())
+          .then(json => resolve(json));
+    })
+  }
 
   postProductData(){
     return new Promise(resolve => {
@@ -143,3 +182,5 @@ Object.size = function(obj) {
   return size;
 };
 
+
+module.exports = _API;

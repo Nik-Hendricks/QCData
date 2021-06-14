@@ -1,51 +1,72 @@
 class XSpreadsheetDataManager{
-  constructor(){
-    this.data_points = [];
+  constructor(product_uid){
+    this.data = {}
+    this.data_points = {};
+    this.prod_uid = product_uid || getCookie('current_prod_uid');
   }
 
-  push_data_point(sheet, x, y, value){
-    this.data_points.push({sheet:sheet, x: x, y: y, value: value});
+  push_data_point(sheet, r, c, key){
+    this.data_points[`${r}${c}`] = key;
+    console.log(this.data_points)
+  }
+
+
+  checkIsDataCell(r, c){
+    if(this.data_points[`${r}${c}`]){
+      return this.data_points[`${r}${c}`];
+    }else{
+      return false
+    }
+  }
+
+  save_data_points(){
+      API.setProductData(this.prod_uid, JSON.stringify(this.data))
   }
 }
 
 class XSpreadsheet extends HTMLElement{
   constructor(){
     super();
+    this.data_parse_range = 50;
     this.product_UID = this.getAttribute("product_UID");
     this.sheet = this.getAttribute("sheet");
     this.ppap = this.getAttribute("ppap");
     this.innerHTML = '<div class="luckysheet-container"><div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;"></div></div>'
-    this.dataValues = []
-    this.manager = new XSpreadsheetDataManager();
+    this.manager = new XSpreadsheetDataManager(this.product_UID);
+    this.isLoaded = false;
   }
 
   connectedCallback(){
+    var scope = this;
     API.getRowById('productModel', this.product_UID || getCookie('current_prod_uid')).then(part => {
       this.prepareLuckyChart(this.sheet, this.ppap).then(ls => {
-        var data_parse_range = 50;
-
         for(var x = 0; x < ls.getAllSheets().length; x++){
           ls.setSheetActive(x);
-          ls.selectHightlightShow();
-          for(var i = 0; i < data_parse_range; i++){
-            for(var j = 0; j < data_parse_range; j++){
+          for(var i = 0; i < this.data_parse_range; i++){
+            for(var j = 0; j < this.data_parse_range; j++){
               var cell_value = String(ls.getCellValue(i, j));
-              var first_char = cell_value.split("")[0];
-              if(cell_value != 'null' && first_char == "$"){
+              var first_two_char = cell_value.substr(0,2);
+              if(cell_value != 'null' && first_two_char == "${"){
+                this.manager.push_data_point(1, i, j, cell_value)
                 var p = parseTpl(cell_value, part.productData);
-                this.manager.push_data_point(x, j, i, p)
                 ls.setCellValue(i, j, p)
               }
             }
           }
         }
         ls.setSheetActive(0)
-        console.log(this.manager.data_points)
+      }).then(() => {
+        this.isLoaded = true;
       })
-    });
+    })
+
+    
   }
 
+
+
   prepareLuckyChart(sheet, ppap){
+    var scope = this;
     return new Promise(resolve => {
       API.getXLSX(sheet, ppap).then(data => {
         //Configuration item
@@ -60,15 +81,33 @@ class XSpreadsheet extends HTMLElement{
             forceCalculation: false,
             hook:{
   		        workbookCreateAfter:function(){
+                //scope.mapDataPoints(luckysheet);
   	          	resolve(luckysheet)
-  	          }
+  	          },
+              cellUpdated:function(row, collumn, p){
+                console.log(p)
+                var r = row;
+                var c = collumn;
+                var newCellValue = luckysheet.getCellValue(r, c)
+                var is_data_cell = scope.manager.checkIsDataCell(r, c)
+                if(is_data_cell != false){
+                  scope.manager.data[is_data_cell] = newCellValue
+                  console.log(scope.isLoaded)
+                  if(scope.isLoaded == true){
+                    scope.manager.save_data_points()
+                  }
+                }
+              }
   	        }
           })
 
         })
       })
+
     })
   }
+
+
 
 }
 
